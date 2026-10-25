@@ -64,28 +64,79 @@ Never use pure `#000` or `#FFF` — `bg-paper` (`#FFFCF3`) and `bg-soot`
 
 ### Semantic tokens (prefer these)
 
-These flip automatically between light and dark via
-`prefers-color-scheme`. Reach for them before a raw ramp step.
+Role names, not colour names. `bg-surface` says what the thing **is**;
+`bg-neutral-50` only says what it looks like. Reach for these first.
 
-| Utility              | Light     | Dark      |
-| -------------------- | --------- | --------- |
-| `bg-surface`         | `#FFFCF3` | `#141311` |
-| `bg-surface-raised`  | `#FFFFFF` | `#1C1A17` |
-| `bg-surface-sunken`  | `#FAF6EB` | `#110F0D` |
-| `text-ink`           | `#1C1A17` | `#F5F1E6` |
-| `text-ink-muted`     | `#4A463F` | `#B9B0A0` |
-| `text-ink-subtle`    | `#8C857A` | `#8C857A` |
-| `border-line`        | `#F0EAD9` | `#2E2B27` |
-| `border-line-strong` | `#DFD7C6` | `#4A463F` |
-| `bg-accent`          | `#045350` | `#74B5B0` |
-| `bg-accent-hover`    | `#063432` | `#A8D2CE` |
-| `text-on-accent`     | `#FFFCF3` | `#052C2A` |
+| Utility              | Value     | Role                                  |
+| -------------------- | --------- | ------------------------------------- |
+| `bg-surface`         | `#FFFCF3` | The page — the logo's own ground      |
+| `bg-surface-raised`  | `#FFFFFF` | Cards, panels, modals                 |
+| `bg-surface-sunken`  | `#FAF6EB` | Wells, inset rows, skeletons          |
+| `text-ink`           | `#1C1A17` | Primary text                          |
+| `text-ink-muted`     | `#4A463F` | Secondary text                        |
+| `text-ink-subtle`    | `#8C857A` | Tertiary — still AA on parchment      |
+| `border-line`        | `#F0EAD9` | Hairline borders (the global default) |
+| `border-line-strong` | `#DFD7C6` | Emphasised rules                      |
+| `bg-accent`          | `#045350` | The logo ink                          |
+| `bg-accent-hover`    | `#063432` | Hover on filled accent                |
+| `text-on-accent`     | `#FFFCF3` | Text and icons sitting on the accent  |
 
-> **Always pair `bg-accent` with `text-on-accent`.** `text-white` on the accent
-> fails contrast in dark mode, where the accent is a light teal.
+> **Always pair `bg-accent` with `text-on-accent`** rather than `text-white`,
+> so the pairing survives any future change to the accent.
 
 Status colours are deliberately desaturated so they sit beside the teal rather
 than fight it: `success` `#2F6F4F`, `danger` `#9B3B2F`, `warning` `#A8761F`.
+
+### This site is light only
+
+There is no dark theme. The parchment **is** the brand, and a dark variant
+dilutes the one colour the identity is built on.
+
+That decision is **declared, not merely implied**. Chrome on Android applies
+[Auto Dark Theme](https://developer.chrome.com/blog/auto-dark-theme) —
+algorithmically inverting light pages when the OS is in dark mode — to sites
+that stay silent. Saying nothing would hand the palette to an algorithm. So the
+opt-out is stated twice:
+
+- `html { color-scheme: only light }` in [globals.css](app/globals.css)
+- `export const viewport = { colorScheme: "only light" }` in
+  [layout.tsx](app/layout.tsx), which lands earlier in the parse and prevents a
+  flash of darkened content
+
+**`only light` is the opt-out; plain `light` is not.** `light` states what the
+page supports without forbidding the browser's own inversion. If you ever
+change this line, change it to `light dark`, not `light`.
+
+No component should contain a `dark:` variant. The 90 inherited from the
+Vercel Commerce template were removed.
+
+<details>
+<summary>If dark mode is ever wanted again</summary>
+
+The structure is still there. Point each semantic token at a runtime variable
+and redefine those variables in a media query — no component has to change,
+because components reference roles rather than literals:
+
+```css
+@theme {
+  --color-surface: var(--surface);
+  /* … */
+}
+:root {
+  --surface: #fffcf3;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #141311;
+  }
+}
+```
+
+One thing to carry over: `brand-700` is too dark to read on a dark ground, so
+the accent has to step up the ramp to `brand-300` (`#74B5B0`), and
+`text-on-accent` has to invert with it.
+
+</details>
 
 ---
 
@@ -153,17 +204,20 @@ reads as dirt on a cream ground.
 ## Usage notes
 
 **Focus rings** are handled globally in `globals.css` for `a`, `input` and
-`button` — `brand-600` on light, `brand-300` on dark. Don't re-declare them.
+`button` — `ring-accent`, offset against `surface`. Don't re-declare them.
 
-**Dark mode** is driven by `prefers-color-scheme`, matching the existing
-`dark:` variants throughout the codebase. Because the semantic tokens already
-flip, `bg-surface` needs no `dark:` counterpart — `bg-white dark:bg-black`
-becomes just `bg-surface-raised`.
+**Borders default to `line`.** The base layer sets `border-color` to
+`--color-line` on every element, so `border` and `border-b` alone already give
+the right hairline. Only name a colour when you want a different one.
+
+**Prefer a single semantic class to a light/dark pair.** Now that there is no
+dark theme, `bg-white` is just `bg-surface-raised` and `text-black` is just
+`text-ink` — one class, and it tracks the palette if the palette moves.
 
 ### Adding a token
 
 Add it to the `@theme` block in [globals.css](app/globals.css). Tailwind
 generates the utility from the variable name: `--color-foo-500` → `bg-foo-500`,
-`--text-foo` → `text-foo`, `--radius-foo` → `rounded-foo`. If it must respond to
-dark mode, point it at a runtime variable in `:root` instead of a literal, the
-way `--color-accent` does.
+`--text-foo` → `text-foo`, `--radius-foo` → `rounded-foo`. Values are plain
+literals — see the light-only note above for what changes if that is ever
+revisited.

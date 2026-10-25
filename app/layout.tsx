@@ -7,8 +7,19 @@ import { ReactNode } from "react";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { baseUrl } from "lib/utils";
+import type { Viewport } from "next";
 
 const { SITE_NAME } = process.env;
+
+/**
+ * The parchment palette is the brand, so the site ships light only.
+ * `only light` opts out of Chrome Android's Auto Dark Theme, which would
+ * otherwise invert the palette algorithmically. Plain `light` would not —
+ * it states a preference without forbidding the browser's own inversion.
+ */
+export const viewport: Viewport = {
+  colorScheme: "only light",
+};
 
 export const metadata = {
   metadataBase: new URL(baseUrl),
@@ -32,7 +43,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={fontVariables}>
-      <body className="bg-surface font-sans text-ink selection:bg-brand-200 selection:text-brand-900 dark:selection:bg-brand-700 dark:selection:text-brand-50">
+      <body className="bg-surface font-sans text-ink selection:bg-brand-200 selection:text-brand-900">
         <CartProvider cartPromise={cart}>
           <Navbar />
           <main>

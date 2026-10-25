@@ -3,19 +3,173 @@
 @plugin "@tailwindcss/container-queries";
 @plugin "@tailwindcss/typography";
 
+/* ==========================================================================
+   GOURMANDIQUE DESIGN SYSTEM
+   Derived from public/images/gourmandiqueLogo.jpg
+     · Ink        #045350  (the engraved G)
+     · Parchment  #FFFCF3  (the plate it sits on)
+   ========================================================================== */
+
+@theme {
+  /* ---------------------------------------------------------------------
+     1. BRAND — the teal of the mark.
+     `brand-700` is the logo ink, sampled exactly. Everything else is built
+     around it so the accent darkens and lightens without drifting in hue.
+     --------------------------------------------------------------------- */
+  --color-brand-50: #edf6f5;
+  --color-brand-100: #d3e8e6;
+  --color-brand-200: #a8d2ce;
+  --color-brand-300: #74b5b0;
+  --color-brand-400: #43938e;
+  --color-brand-500: #1e7470;
+  --color-brand-600: #0a605c;
+  --color-brand-700: #045350; /* ← sampled from the logo */
+  --color-brand-800: #054240;
+  --color-brand-900: #063432;
+  --color-brand-950: #00211f;
+
+  /* ---------------------------------------------------------------------
+     2. NEUTRALS — warm, not grey.
+     This intentionally REPLACES Tailwind's stock `neutral` ramp, so every
+     existing `bg-neutral-50` / `border-neutral-200` in the codebase inherits
+     the parchment cast with no component edits. `neutral-50` is the logo
+     background, sampled exactly.
+     --------------------------------------------------------------------- */
+  --color-neutral-50: #fffcf3; /* ← sampled from the logo */
+  --color-neutral-100: #faf6eb;
+  --color-neutral-200: #f0ead9; /* hairline borders on parchment */
+  --color-neutral-300: #dfd7c6;
+  --color-neutral-400: #b9b0a0;
+  --color-neutral-500: #8c857a; /* lightest text that still passes AA */
+  --color-neutral-600: #6b655c;
+  --color-neutral-700: #4a463f;
+  --color-neutral-800: #2e2b27;
+  --color-neutral-900: #1c1a17;
+  --color-neutral-950: #110f0d;
+
+  /* Paper white/black: never pure, always carrying the warm cast. */
+  --color-paper: #fffcf3;
+  --color-soot: #141311;
+
+  /* ---------------------------------------------------------------------
+     3. SEMANTIC TOKENS — role names, not colour names.
+     Prefer these over raw ramp steps in new work: `bg-surface` says what the
+     thing is, `bg-neutral-50` only says what it looks like.
+
+     This site is LIGHT ONLY — see the `color-scheme` declaration below for
+     why. These are therefore plain literals. If dark mode is ever wanted,
+     point each one at a runtime var in `:root` and redefine that var inside
+     a `prefers-color-scheme: dark` block; nothing else has to change.
+     --------------------------------------------------------------------- */
+  --color-surface: #fffcf3; /* the page itself — the logo's ground */
+  --color-surface-raised: #ffffff; /* cards and panels, a touch above */
+  --color-surface-sunken: #faf6eb; /* wells, inset rows */
+  --color-ink: #1c1a17; /* primary text */
+  --color-ink-muted: #4a463f; /* secondary text */
+  --color-ink-subtle: #8c857a; /* tertiary — still AA on parchment */
+  --color-line: #f0ead9; /* hairline borders */
+  --color-line-strong: #dfd7c6; /* emphasised rules */
+  --color-accent: #045350; /* the logo ink */
+  --color-accent-hover: #063432;
+  --color-on-accent: #fffcf3; /* text/icons sitting on the accent */
+
+  /* Status — kept desaturated so they sit beside the teal, not against it. */
+  --color-success: #2f6f4f;
+  --color-danger: #9b3b2f;
+  --color-warning: #a8761f;
+
+  /* ---------------------------------------------------------------------
+     4. TYPOGRAPHY
+     Two faces only. Cormorant Garamond italic carries the brand voice;
+     Inter carries everything the customer has to read quickly.
+     --------------------------------------------------------------------- */
+  --font-sans:
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --font-display:
+    var(--font-cormorant), ui-serif, Georgia, "Times New Roman", serif;
+
+  /* Heading scale — fluid, sized for Cormorant.
+     Use as `text-h1` … `text-h4`; each carries its own line-height and
+     tracking, so a heading needs one class, not three. */
+  --text-h1: clamp(2.5rem, 1.6rem + 3.6vw, 4rem);
+  --text-h1--line-height: 1.05;
+  --text-h1--letter-spacing: -0.02em;
+
+  --text-h2: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.015em;
+
+  --text-h3: clamp(1.375rem, 1.2rem + 0.9vw, 1.75rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.01em;
+
+  --text-h4: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
+  --text-h4--line-height: 1.4;
+  --text-h4--letter-spacing: 0;
+
+  /* Eyebrow / nav label — small, letterspaced, uppercase. */
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.18em;
+  --text-eyebrow--font-weight: 500;
+
+  --tracking-luxe: 0.18em;
+
+  /* ---------------------------------------------------------------------
+     5. SHAPE & DEPTH
+     Shadows are warm-tinted — a neutral black shadow reads dirty on cream.
+     --------------------------------------------------------------------- */
+  --radius-card: 0.75rem;
+  --radius-pill: 9999px;
+
+  --shadow-soft:
+    0 1px 2px oklch(0.25 0.03 85 / 0.04), 0 4px 16px oklch(0.25 0.03 85 / 0.06);
+  --shadow-lifted:
+    0 2px 4px oklch(0.25 0.03 85 / 0.05), 0 12px 32px oklch(0.25 0.03 85 / 0.1);
+
+  --ease-silk: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ==========================================================================
+   LIGHT ONLY — and declared, not merely implied.
+
+   The parchment is the brand, so there is no dark theme. But staying silent
+   is not the same as opting out: Chrome on Android applies Auto Dark Theme,
+   algorithmically inverting light pages when the OS is in dark mode, which
+   would turn this palette into an approximation nobody approved.
+
+   `only light` is the opt-out. Plain `light` is NOT — it describes what the
+   page supports without forbidding the browser's own inversion. This pairs
+   with the matching <meta name="color-scheme"> in app/layout.tsx, which
+   lands earlier in the parse and avoids a flash of darkened content.
+   ========================================================================== */
+
+html {
+  color-scheme: only light;
+}
+
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-line, currentColor);
   }
-}
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Cormorant's discretionary ligatures are part of its charm. Tracking is
+     deliberately NOT set here — each `text-h*` token carries its own. */
+  .font-display {
+    font-feature-settings:
+      "liga" 1,
+      "dlig" 1;
   }
 }
 
@@ -28,5 +182,5 @@
 a,
 input,
 button {
-  @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 dark:focus-visible:ring-neutral-600 dark:focus-visible:ring-offset-neutral-900;
+  @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
 }
