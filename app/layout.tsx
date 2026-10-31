@@ -1,13 +1,12 @@
 import { CartProvider } from "components/cart/cart-context";
-import { Navbar } from "components/layout/navbar";
 import { WelcomeToast } from "components/welcome-toast";
 import { getCart } from "lib/shopify";
-import { fontVariables } from "./fonts";
-import { ReactNode } from "react";
-import { Toaster } from "sonner";
-import "./globals.css";
 import { baseUrl } from "lib/utils";
 import type { Viewport } from "next";
+import { ReactNode } from "react";
+import { Toaster } from "sonner";
+import { fontVariables } from "./fonts";
+import "./globals.css";
 
 const { SITE_NAME } = process.env;
 
@@ -45,7 +44,6 @@ export default async function RootLayout({
     <html lang="en" className={fontVariables}>
       <body className="bg-surface font-sans text-ink selection:bg-brand-200 selection:text-brand-900">
         <CartProvider cartPromise={cart}>
-          <Navbar />
           <main>
             {children}
             <Toaster closeButton />
