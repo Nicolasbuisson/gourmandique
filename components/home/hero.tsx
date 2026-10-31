@@ -1,12 +1,6 @@
 import { GourmandiqueWordmark } from "components/gourmandique-wordmark";
 
 export function HomeHero() {
-  // use public\images\GourmandiqueConnector.jpg to generate svg as one stroke?
-  // see if can remove the connector between 'G' and 'o' from crossing past the 'G'
-  // or we have no connector public\images\Gourmandique.jpg
-
-  // CHECK CLAUDE CONVO HISTORY
-  // FIX CROSSING STUBS
   return (
     <section
       id="hero"
