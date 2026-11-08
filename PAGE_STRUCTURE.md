@@ -7,19 +7,23 @@ order they appear.
 Use it as the checklist when building a page: one `<section>` per row, in the
 order listed, nothing extra.
 
+The **Inspiration** column on each section links to other sites whose take on
+that section is worth studying before building it. Treat it as reference for
+feel and motion, not as spec; the Purpose and Content columns still win.
+
 ---
 
 ## Route map
 
-| Page    | Route               | File                            | Status                             |
-| ------- | ------------------- | ------------------------------- | ---------------------------------- |
-| Home    | `/`                 | `app/page.tsx`                  | Exists — template content, replace |
-| Shop    | `/shop`             | `app/shop/page.tsx`             | Rename of `app/search/` — see below |
+| Page    | Route                | File                             | Status                               |
+| ------- | -------------------- | -------------------------------- | ------------------------------------ |
+| Home    | `/`                  | `app/page.tsx`                   | Exists — template content, replace   |
+| Shop    | `/shop`              | `app/shop/page.tsx`              | Rename of `app/search/` — see below  |
 | Shop    | `/shop/[collection]` | `app/shop/[collection]/page.tsx` | Rename of `app/search/[collection]/` |
-| Wedding | `/wedding`          | `app/wedding/page.tsx`          | To build                           |
-| About   | `/about`            | `app/about/page.tsx`            | To build                           |
-| Contact | `/contact`          | `app/contact/page.tsx`          | To build                           |
-| Product | `/product/[handle]` | `app/product/[handle]/page.tsx` | Exists — template                  |
+| Wedding | `/wedding`           | `app/wedding/page.tsx`           | To build                             |
+| About   | `/about`             | `app/about/page.tsx`             | To build                             |
+| Contact | `/contact`           | `app/contact/page.tsx`           | To build                             |
+| Product | `/product/[handle]`  | `app/product/[handle]/page.tsx`  | Exists — template                    |
 
 **`app/[page]/page.tsx` is a Shopify-CMS catch-all.** Static segments win over
 dynamic ones in Next.js routing, so creating `app/about/` shadows any Shopify
@@ -49,8 +53,7 @@ old path:
   `.replace("/collections", "/search")`, which rewrites Shopify menu URLs
 
 The sidebar links, the "All" entry and the Shopify header menu all break
-silently if any one of these is missed — they produce valid-looking links to a
-404. Grep for `/search` after the move; it should return nothing outside
+silently if any one of these is missed — they produce valid-looking links to a 404. Grep for `/search` after the move; it should return nothing outside
 `components/layout/search/` (a directory name, not a route — leave it, or rename
 it to `components/layout/shop/` in the same pass).
 
@@ -87,10 +90,16 @@ and the standard container.
 Every section follows the same contract so pages stay composable:
 
 ```tsx
-<section id="gallery" aria-labelledby="gallery-title" className="py-20 md:py-28">
+<section
+  id="gallery"
+  aria-labelledby="gallery-title"
+  className="py-20 md:py-28"
+>
   <div className="mx-auto w-full max-w-7xl px-6">
     <p className="text-eyebrow text-ink-subtle">Our work</p>
-    <h2 id="gallery-title" className="font-display text-h2 text-ink">…</h2>
+    <h2 id="gallery-title" className="font-display text-h2 text-ink">
+      …
+    </h2>
   </div>
 </section>
 ```
@@ -110,24 +119,30 @@ Every section follows the same contract so pages stay composable:
 
 ## Shared section components
 
-Five of the sections below repeat across pages. Build each **once** in
+These five sections repeat across pages, or are built to. Build each **once** in
 `components/sections/`, driven by props, with page-specific copy passed in — not
 copy-pasted per page. (Heroes are the exception — see above.)
 
-| Component      | File                                   | Used on                     | Shape                                    |
-| -------------- | -------------------------------------- | --------------------------- | ---------------------------------------- |
-| `Gallery`      | `components/sections/gallery.tsx`      | Home, Wedding               | `items[]`, `columns`, `cta`              |
-| `Testimonials` | `components/sections/testimonials.tsx` | Home, Wedding               | `items[]` of `{ quote, name, occasion }` |
-| `Faq`          | `components/sections/faq.tsx`          | Home, Wedding               | `items[]` of `{ q, a }`                  |
-| `Stats`        | `components/sections/stats.tsx`        | Home, About                 | `items[]` of `{ value, label }`          |
-| `CtaBanner`    | `components/sections/cta-banner.tsx`   | About (+ reusable anywhere) | `title`, `body`, `primary`, `secondary`  |
+| Component      | File                                   | Used on       | Shape                                               |
+| -------------- | -------------------------------------- | ------------- | --------------------------------------------------- |
+| `Gallery`      | `components/sections/gallery.tsx`      | Home          | `items[]`, `columns`, `cta`                         |
+| `Testimonials` | `components/sections/testimonials.tsx` | Home, Wedding | `items[]` of `{ quote, name, occasion }`            |
+| `Faq`          | `components/sections/faq.tsx`          | Home, Wedding | `items[]` of `{ q, a }`                             |
+| `Stats`        | `components/sections/stats.tsx`        | Home, About   | `items[]` of `{ value, label }`                     |
+| `CtaBanner`    | `components/sections/cta-banner.tsx`   | Home, About   | `title`, `body`, `primary`, `secondary`, `images[]` |
 
 `Faq` should render as real `<details>`/`<summary>` elements — open by default
 is fine, and it needs no client JavaScript. Emit FAQPage JSON-LD from the same
 `items[]` array so the copy and the structured data cannot drift.
 
+**The Wedding gallery is not `Gallery`.** It differs from Home's in layout and
+motion, so like the heroes it is page-local: `GalleryWedding`, built as
+`GalleryWedding` in `components/wedding/gallery-wedding.tsx`. Don't fold it into
+`Gallery` behind a prop.
+
 **Content lives in `lib/content/`** as typed modules (`faq.ts`,
-`testimonials.ts`, `stats.ts`, `gallery.ts`) — not inline in JSX. Copy changes
+`testimonials.ts`, `stats.ts`, `gallery.ts`, `gallery-wedding.ts`) — not inline
+in JSX. Copy changes
 then touch one file, and the Wedding FAQ can share the type while keeping its
 own list.
 
@@ -136,16 +151,17 @@ own list.
 ## Home — `/`
 
 The one page that has to work for a visitor who has never heard of the bakery.
-Order is deliberate: what we make → proof it's good → answer the objection.
+Order is deliberate: what we make → proof it's good → answer the objection →
+ask for the order.
 
-| #   | Section          | `id`             | Purpose                                                       | Content / data                                                                              |
-| --- | ---------------- | ---------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| 1   | Hero             | `hero`           | Say what Gourmandique is in one glance; primary CTA to Shop   | **Page-local.** The tallest hero on the site: full-bleed signature-cake image, `font-display text-h1`, primary CTA → `/shop`, secondary → `/wedding`. Static. |
-| 2   | Features         | `features`       | Name the two main offerings so visitors self-select           | 2–3 cards: **Cakes & pastries** → `/shop`, **Wedding cakes** → `/wedding`, optional **Custom orders** → `/contact`. Image + title + one line + link each. Static. |
-| 3   | Gallery          | `gallery`        | Show the product range; carry the craft                       | 6–9 product images, masonry or 3-col grid. Shopify products (reuse `getProducts`) or curated static set. "See everything" → `/shop`. |
-| 4   | Stats            | `stats`          | Social proof in numbers before the words                      | 3–4 figures: cakes baked, weddings served, years baking, 5-star reviews. Static, `lib/content/stats.ts`. |
-| 5   | Testimonials     | `testimonials`   | Proof from customers                                          | 3 quotes, mixed occasions. Static.                                                           |
-| 6   | FAQ              | `faq`            | Clear the blockers: lead time, delivery, allergens, custom    | 5–7 Q&A, general-purpose.                                                                    |
+| #   | Section      | `id`           | Purpose                                                     | Content / data                                                                                                                                                                                                                                                                                                                                             | Inspiration                                                                                                                                            |
+| --- | ------------ | -------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Hero         | `hero`         | Say what Gourmandique is in one glance; primary CTA to Shop | **Page-local.** The tallest hero on the site: grid of pastries + wedding cakes, description that highlights both the regular pastries and wedding cakes OR instead of grid of pastries we do a video combining Mimi baking BTS + final results (pastries, wedding cakes...) `font-display text-h1`, primary CTA → `/shop`, secondary → `/wedding`. Static. | [localcan.com](https://www.localcan.com/)                                                                                                              |
+| 2   | Gallery      | `gallery`      | Show the product range; carry the craft                     | 6–9 product images, gallery layout single column layout for mobile. Shopify products (reuse `getProducts`) or curated static set. "See more" → `/shop`.                                                                                                                                                                                                    | layout inspo for desktop https://blog.olivierlarose.com/tutorials/floating-image-gallery each image is a link to a product page                        |
+| 3   | Stats        | `stats`        | Social proof in numbers before the words                    | 3–4 figures: cakes baked, weddings served, years baking, 5-star reviews. Static, `lib/content/stats.ts`.                                                                                                                                                                                                                                                   | [Lemon Squeezy](https://saaslandingpage.com/lemon-squeezy-about-us/), [Join](https://saaslandingpage.com/join-about-us/)                               |
+| 4   | Testimonials | `testimonials` | Proof from customers                                        | 3 quotes, mixed occasions. Static.                                                                                                                                                                                                                                                                                                                         | [Dribbble](https://saaslandingpage.com/dribbble-testimonials/), [Agorapulse](https://saaslandingpage.com/agorapulse-testimonials/) (testimonial cards) |
+| 5   | FAQ          | `faq`          | Clear the blockers: lead time, delivery, allergens, custom  | 5–7 Q&A, general-purpose.                                                                                                                                                                                                                                                                                                                                  | Same as alexonmedia, but adapt styling                                                                                                                 |
+| 6   | CTA          | `cta`          | Convert the visitor whose questions are now answered        | `CtaBanner` on `bg-accent` with `text-on-accent`. Primary → `/shop`, secondary → `/wedding`. Background images of pastries + wedding cakes.                                                                                                                                                                                                                |                                                                                                                                                        |
 
 Replace the current `ThreeItemGrid` + `Carousel` body of
 [page.tsx](app/page.tsx). Both are template components; `ThreeItemGrid` can be
@@ -161,10 +177,10 @@ with the real title and description.
 A browse page, not a landing page. The hero stays short; products start above
 the fold on desktop.
 
-| #   | Section       | `id`       | Purpose                                 | Content / data                                                                                                 |
-| --- | ------------- | ---------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| 1   | Hero          | `hero`     | Orient, then get out of the way         | **Page-local**, and the shortest on the site. Title + one line, no image or a thin banner. Static. Lives in `app/shop/layout.tsx` so it also sits above `/shop/[collection]`. |
-| 2   | Products list | `products` | Browse, filter, sort, add to cart       | Shopify Storefront via `getProducts` / `getCollectionProducts`. Reuse `Collections` (sidebar), `FilterList` (sort), `Grid` + `ProductGridItems`. |
+| #   | Section       | `id`       | Purpose                           | Content / data                                                                                                                                                                | Inspiration |
+| --- | ------------- | ---------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 1   | Hero          | `hero`     | Orient, then get out of the way   | **Page-local**, and the shortest on the site. Title + one line, no image or a thin banner. Static. Lives in `app/shop/layout.tsx` so it also sits above `/shop/[collection]`. |             |
+| 2   | Products list | `products` | Browse, filter, sort, add to cart | Shopify Storefront via `getProducts` / `getCollectionProducts`. Reuse `Collections` (sidebar), `FilterList` (sort), `Grid` + `ProductGridItems`.                              |             |
 
 Products section notes:
 
@@ -182,13 +198,13 @@ Products section notes:
 A single-goal page: get a consultation booked. Every section points at
 `#booking`.
 
-| #   | Section          | `id`           | Purpose                                            | Content / data                                                                                      |
-| --- | ---------------- | -------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| 1   | Hero             | `hero`         | Set the tone; CTA jumps to the form                | **Page-local.** The most editorial hero — wedding-cake image, generous whitespace, single primary CTA → `#booking`. Static. |
-| 2   | Gallery          | `gallery`      | The actual portfolio — the strongest asset here    | 9–12 past wedding cakes, larger tiles than Home. Captions welcome (venue, season). Static set in `lib/content/gallery.ts`. |
-| 3   | Testimonials     | `testimonials` | Wedding-specific quotes only                       | 3–4 quotes from couples, with wedding date or venue. Separate list from Home's.                      |
-| 4   | FAQ              | `faq`          | Wedding-specific blockers                          | Lead time, tastings, servings per tier, delivery & setup, deposit, dietary. Different list from Home's — same component. |
-| 5   | Booking          | `booking`      | Capture the enquiry with a date                    | Form + date/calendar picker. **This is the conversion point** — the CTA anchor target.                |
+| #   | Section        | `id`           | Purpose                                         | Content / data                                                                                                                                                                                  | Inspiration                                                                                                                                                                   |
+| --- | -------------- | -------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Hero           | `hero`         | Set the tone; CTA jumps to the form             | **Page-local.** The most editorial hero — wedding-cake image, generous whitespace, single primary CTA → `#booking`. Static.                                                                     |                                                                                                                                                                               |
+| 2   | GalleryWedding | `gallery`      | The actual portfolio — the strongest asset here | **Page-local** (`GalleryWedding`), not the shared `Gallery`. 9–12 past wedding cakes, larger tiles than Home. Captions welcome (venue, season). Static set in `lib/content/gallery-wedding.ts`. | https://blog.olivierlarose.com/tutorials/zoom-parallax or https://www.youtube.com/watch?v=edRm_AnGGTo (which we could reuse for our Gallery component? Is it elegant though?) |
+| 3   | Testimonials   | `testimonials` | Wedding-specific quotes only                    | 3–4 quotes from couples, with wedding date or venue. Separate list from Home's.                                                                                                                 | [Dribbble](https://saaslandingpage.com/dribbble-testimonials/), [Agorapulse](https://saaslandingpage.com/agorapulse-testimonials/) (testimonial cards)                        |
+| 4   | FAQ            | `faq`          | Wedding-specific blockers                       | Lead time, tastings, servings per tier, delivery & setup, deposit, dietary. Different list from Home's — same component.                                                                        | Same as alexonmedia, but adapt styling                                                                                                                                        |
+| 5   | Booking        | `booking`      | Capture the enquiry with a date                 | Form + date/calendar picker. **This is the conversion point** — the CTA anchor target.                                                                                                          |                                                                                                                                                                               |
 
 Booking section notes:
 
@@ -211,18 +227,25 @@ Booking section notes:
 
 Meriem is the product differentiator. This page is a story, then a nudge.
 
-| #   | Section   | `id`        | Purpose                                             | Content / data                                                                                              |
-| --- | --------- | ----------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 1   | Hero      | `hero`      | Meriem and her passion for baking                   | **Page-local**, and structurally unlike the others: a two-column portrait-beside-prose layout carrying a few paragraphs in her voice, not a headline over an image. Static. |
-| 2   | Stats     | `stats`     | Ground the story in numbers                         | Same component as Home; may reuse the same figures.                                                          |
-| 3   | Instagram | `instagram` | Show it's a living bakery; push to follow            | 6–8 recent-looking posts in a grid, each linking to Instagram, plus a follow CTA with the handle.            |
-| 4   | CTA       | `cta`       | Convert the reader who now likes her                | `CtaBanner` on `bg-accent` with `text-on-accent`. Primary → `/shop`, secondary → `/wedding`.                 |
+| #   | Section   | `id`        | Purpose                                   | Content / data                                                                                                                                                          | Inspiration                                                                                                                                                                                            |
+| --- | --------- | ----------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Hero      | `hero`      | Meet Meriem and her passion for baking    |                                                                                                                                                                         | effect could be [Olivier Larose — background image parallax](https://blog.olivierlarose.com/tutorials/background-image-parallax) with this layout as inspo: https://saaslandingpage.com/join-about-us/ |
+| 2   | Stats     | `stats`     | Ground the story in numbers               | Same component as Home; may reuse the same figures.                                                                                                                     | [Lemon Squeezy](https://saaslandingpage.com/lemon-squeezy-about-us/), [Join](https://saaslandingpage.com/join-about-us/)                                                                               |
+| 3   | Instagram | `instagram` | Show it's a living bakery; push to follow | **Live feed** via the Instagram API: carousel of the latest posts, each linking to Instagram, plus a follow CTA with the handle. `InstaSection` in `components/insta/`. | Same as alexonmedia, but modify styling                                                                                                                                                                |
+| 4   | CTA       | `cta`       | Convert the reader who now likes her      | `CtaBanner` on `bg-accent` with `text-on-accent`. Primary → `/shop`, secondary → `/wedding`. Background images of pastries + wedding cakes.                             |                                                                                                                                                                                                        |
 
-Instagram section notes: Instagram's Basic Display API is retired, so a live
-feed means the Graph API with a business account and a long-lived token, or a
-third-party widget. For now build it as a **static curated grid** of images in
-`lib/content/instagram.ts` with outbound links — same markup, no API, and
-swappable for a real feed later without touching the page.
+Instagram section notes:
+
+- **Decided: live feed**, not a static grid. `InstaSection` (a server component)
+  reads `graph.instagram.com` with the bakery's user ID and a long-lived access
+  token, so the account must be a business or creator account. The token
+  expires after 60 days, so it needs a refresh before then or the section
+  silently renders nothing.
+- Caching is already worked out in `instaSection.tsx`: the media list
+  revalidates every 4 hours, each post every 15 minutes, because Instagram's
+  media URLs expire within days. Keep those numbers unless the expiry behaviour
+  changes.
+- Need to remember to create a Vercel cron job to refresh the instagram token and update the environment variable.
 
 ---
 
@@ -230,9 +253,9 @@ swappable for a real feed later without touching the page.
 
 Deliberately minimal. No hero, no upsell.
 
-| #   | Section | `id`      | Purpose                                | Content / data                                                                                                     |
-| --- | ------- | --------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| 1   | Contact | `contact` | One place to reach the bakery          | Two columns: the form, and the details beside it — email, phone, address, hours, social links, optional map embed. |
+| #   | Section | `id`      | Purpose                       | Content / data                                                                               | Inspiration                                        |
+| --- | ------- | --------- | ----------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| 1   | Contact | `contact` | One place to reach the bakery | email, phone, address, hours, social links, pickup location included but not actual address. | https://saaslandingpage.com/cataphract-about-us-2/ |
 
 Notes:
 
@@ -248,11 +271,10 @@ Notes:
 
 ## Before building
 
-Two decisions are still open and each one changes the work:
+One decision is still open and changes the work:
 
 1. **Booking calendar** — third-party embed or native form? Decides the client
    JavaScript, the data store, and what availability means.
-2. **Instagram** — curated static grid or live Graph API feed?
 
 Per-page checklist as each one is built:
 
