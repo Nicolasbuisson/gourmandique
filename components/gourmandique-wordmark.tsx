@@ -57,6 +57,11 @@ const TITTLE_SECONDS = 0.18;
 const TITTLE_DELAY = PEN_SECONDS + TITTLE_PAUSE;
 // The fade starts as the dot lands.
 const SETTLE_DELAY = TITTLE_DELAY + TITTLE_SECONDS;
+const SETTLE_SECONDS = 0.3;
+
+// When the last frame is reached, measured from mount. Anything that should
+// follow the writing (the home hero's curtain) times itself off this.
+export const WORDMARK_SECONDS = SETTLE_DELAY + SETTLE_SECONDS;
 
 // The time (0-1) at which the eased word reaches a given progress (0-1): solve
 // the bezier's y for its parameter, then read x there.
@@ -92,7 +97,7 @@ const CSS = `
 .gq-pen,.gq-tittle{stroke-dasharray:1 2;stroke-dashoffset:1.001}
 .gq-pen{animation-name:gq-draw;animation-timing-function:linear;animation-fill-mode:both}
 .gq-tittle{animation:gq-draw ${seconds(TITTLE_SECONDS)} ease-out ${seconds(TITTLE_DELAY)} both}
-.gq-settle{opacity:0;animation:gq-settle .3s ease-out ${seconds(SETTLE_DELAY)} both}
+.gq-settle{opacity:0;animation:gq-settle ${seconds(SETTLE_SECONDS)} ease-out ${seconds(SETTLE_DELAY)} both}
 @keyframes gq-draw{to{stroke-dashoffset:0}}
 @keyframes gq-settle{to{opacity:1}}
 @media (prefers-reduced-motion:reduce){

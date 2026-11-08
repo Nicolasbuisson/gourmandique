@@ -163,6 +163,18 @@ ask for the order.
 | 5   | FAQ          | `faq`          | Clear the blockers: lead time, delivery, allergens, custom  | 5–7 Q&A, general-purpose.                                                                                                                                                                                                                                                                                                                                  | Same as alexonmedia, but adapt styling                                                                                                                 |
 | 6   | CTA          | `cta`          | Convert the visitor whose questions are now answered        | `CtaBanner` on `bg-accent` with `text-on-accent`. Primary → `/shop`, secondary → `/wedding`. Background images of pastries + wedding cakes.                                                                                                                                                                                                                |                                                                                                                                                        |
 
+**The hero currently opens as a curtain.** [home/hero.tsx](components/home/hero.tsx)
+renders the `GourmandiqueWordmark` on a full-screen `bg-accent` panel that is
+`fixed` above the page (out of the flow), writes the word, then lifts off the
+top and reveals the page. The lift is CSS, delayed by the wordmark's exported
+`WORDMARK_SECONDS`. It plays **once per page load**: every refresh or new
+tab plays it, coming back to `/` through a client-side navigation doesn't.
+[curtain-gate.tsx](components/home/curtain-gate.tsx) handles the skip and stops
+scrolling while it is down. It sits above everything, the Sonner toaster
+included. The sr-only `<h1>` sits outside the curtain, which ends
+`visibility: hidden`. When the in-flow hero described above
+is built, it goes beneath the curtain in the same component.
+
 Replace the current `ThreeItemGrid` + `Carousel` body of
 [page.tsx](app/page.tsx). Both are template components; `ThreeItemGrid` can be
 retired or recast as the Gallery.
