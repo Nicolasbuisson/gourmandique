@@ -171,9 +171,8 @@ top and reveals the page. The lift is CSS, delayed by the wordmark's exported
 tab plays it, coming back to `/` through a client-side navigation doesn't.
 [curtain-gate.tsx](components/home/curtain-gate.tsx) handles the skip and stops
 scrolling while it is down. It sits above everything, the Sonner toaster
-included. The sr-only `<h1>` sits outside the curtain, which ends
-`visibility: hidden`. When the in-flow hero described above
-is built, it goes beneath the curtain in the same component.
+included. The curtain ends `visibility: hidden`, so the `<h1>` lives in the
+in-flow hero, not inside it.
 
 Replace the current `ThreeItemGrid` + `Carousel` body of
 [page.tsx](app/page.tsx). Both are template components; `ThreeItemGrid` can be

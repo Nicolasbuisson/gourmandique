@@ -15,8 +15,8 @@ export const metadata = {
 export default function HomePage() {
   return (
     <>
-      <HomeHero />
       <Navbar />
+      <HomeHero />
       <ThreeItemGrid />
       <Carousel />
       <Footer />
