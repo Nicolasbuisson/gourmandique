@@ -14,14 +14,29 @@ let played = false;
 // before the browser paints. It can only already have played on a client-side
 // navigation, so on a full load the server-rendered curtain is never hidden.
 //
-// Otherwise the page can't scroll while the curtain is down. The lock is
-// released when the curtain starts to lift, not when it is gone: releasing it
-// brings the scrollbar back and reflows the page, and that should happen while
-// the page is still covered. The curtain counts as played from that moment, so
-// leaving mid-writing plays it again on return.
+// Otherwise the page can't scroll while the curtain is down. The lock doesn't
+// touch `overflow`, which would hide the scrollbar and reflow the page when it
+// came back. Instead it swallows the wheel, touch and keys that scroll, and
+// puts the page back if it moves anyway (the scrollbar itself can still be
+// dragged). The lock is released when the curtain starts to lift, so the page
+// can be scrolled while it is uncovered. The curtain counts as played from that
+// moment, so leaving mid-writing plays it again on return.
 //
 // If this hydrates after the lift has already begun, it counts as played and
 // never locks: there is no animationstart left to release it.
+
+const SCROLL_KEYS = new Set([
+  " ",
+  "PageUp",
+  "PageDown",
+  "Home",
+  "End",
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+]);
+
 export function CurtainGate({ curtainId }: { curtainId: string }) {
   useLayoutEffect(() => {
     const curtain = document.getElementById(curtainId);
@@ -39,10 +54,23 @@ export function CurtainGate({ curtainId }: { curtainId: string }) {
       return;
     }
 
-    const root = document.documentElement;
-    const previous = root.style.overflow;
+    const { scrollX, scrollY } = window;
+    const block = (event: Event) => event.preventDefault();
+    const blockKeys = (event: KeyboardEvent) => {
+      if (!SCROLL_KEYS.has(event.key)) return;
+      // Typing a space or moving the caret in a field isn't scrolling.
+      const target = event.target as HTMLElement;
+      if (target.isContentEditable || target.closest("input, textarea, select"))
+        return;
+      event.preventDefault();
+    };
+    const hold = () => window.scrollTo(scrollX, scrollY);
+
     const release = () => {
-      root.style.overflow = previous;
+      window.removeEventListener("wheel", block);
+      window.removeEventListener("touchmove", block);
+      window.removeEventListener("keydown", blockKeys);
+      window.removeEventListener("scroll", hold);
     };
     const onStart = (event: AnimationEvent) => {
       if (event.target !== curtain) return;
@@ -50,7 +78,11 @@ export function CurtainGate({ curtainId }: { curtainId: string }) {
       release();
     };
 
-    root.style.overflow = "hidden";
+    // Not passive, or preventDefault is ignored.
+    window.addEventListener("wheel", block, { passive: false });
+    window.addEventListener("touchmove", block, { passive: false });
+    window.addEventListener("keydown", blockKeys);
+    window.addEventListener("scroll", hold);
     curtain.addEventListener("animationstart", onStart);
     return () => {
       curtain.removeEventListener("animationstart", onStart);
