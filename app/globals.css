@@ -149,6 +149,24 @@ html {
   color-scheme: only light;
 }
 
+/* ==========================================================================
+   HEADER HEIGHT
+   The site header is fixed, so it takes no room in the flow. This is the
+   height of its closed bar; anything that has to clear the header, or fill
+   the screen beneath it, reads this rather than guessing. It lives in :root,
+   not @theme, because it changes at a breakpoint.
+   ========================================================================== */
+
+:root {
+  --header-h: 2.5rem;
+}
+
+@media (width >= 40rem) {
+  :root {
+    --header-h: 4rem;
+  }
+}
+
 @layer base {
   *,
   ::after,

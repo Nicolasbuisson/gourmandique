@@ -68,7 +68,7 @@ export function HomeHero() {
     <section
       id="hero"
       aria-labelledby="hero-title"
-      className="py-4 lg:h-svh lg:min-h-[40rem] lg:py-6"
+      className="mt-(--header-h) py-4 lg:h-[calc(100svh-var(--header-h))] lg:min-h-[40rem] lg:py-6"
     >
       <style>{CSS}</style>
 

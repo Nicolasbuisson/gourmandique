@@ -210,6 +210,13 @@ reads as dirt on a cream ground.
 `--color-line` on every element, so `border` and `border-b` alone already give
 the right hairline. Only name a colour when you want a different one.
 
+**Clear the header with `--header-h`.** The site header is fixed, so it takes
+no room in the flow. `--header-h` (in `:root` in `globals.css`, not `@theme`,
+because it changes at `sm`: `2.5rem`, then `4rem`) is the height of its closed
+bar, and the bar is set to exactly that. Anything that has to sit below the
+header or fill the screen under it reads the variable rather than guessing: the
+home hero uses `mt-(--header-h)` and `lg:h-[calc(100svh-var(--header-h))]`.
+
 **Prefer a single semantic class to a light/dark pair.** Now that there is no
 dark theme, `bg-white` is just `bg-surface-raised` and `text-black` is just
 `text-ink` — one class, and it tracks the palette if the palette moves.
