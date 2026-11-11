@@ -20,16 +20,16 @@ const links = [
     alt: "pastries",
   },
   {
-    title: "About Us",
-    href: "/about",
-    src: "gourmandiqueLogo.jpg",
-    alt: "picture of founder",
-  },
-  {
     title: "Wedding",
     href: "/wedding",
     src: "mimiWeddingCake.jpg",
     alt: "wedding cake",
+  },
+  {
+    title: "About",
+    href: "/about",
+    src: "gourmandiqueLogo.jpg",
+    alt: "picture of founder",
   },
   {
     title: "Contact",

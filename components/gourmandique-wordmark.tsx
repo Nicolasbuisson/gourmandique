@@ -161,3 +161,20 @@ export function GourmandiqueWordmark({ className }: { className?: string }) {
     </svg>
   );
 }
+
+export function GourmandiqueWordmarkStatic({
+  className,
+}: {
+  className?: string;
+}) {
+  return (
+    <svg
+      className={className}
+      viewBox={VIEWBOX}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d={FILL} fillRule="evenodd" fill="currentColor" />
+    </svg>
+  );
+}

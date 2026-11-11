@@ -10,7 +10,7 @@ export const Header = () => {
   const [isActive, setIsActive] = useState(false);
 
   return (
-    <div className="fixed inset-x-0 top-0 z-40 bg-surface px-2.5 sm:px-5">
+    <div className="fixed inset-x-0 top-0 z-40 border-b border-line-strong bg-surface px-2.5 sm:px-5">
       <div className="relative flex h-(--header-h) items-center justify-center text-xs font-normal uppercase text-ink sm:text-[15px]">
         <Link href="/" className="absolute left-0">
           Gourmandique
