@@ -1,7 +1,6 @@
 import { Carousel } from "components/carousel";
 import { ThreeItemGrid } from "components/grid/three-items";
 import { HomeHero } from "components/home/hero";
-import Footer from "components/layout/footer";
 import { Header } from "components/layout/navigation/header";
 
 export const metadata = {
@@ -20,7 +19,6 @@ export default function HomePage() {
       <HomeHero />
       <ThreeItemGrid />
       <Carousel />
-      <Footer />
     </>
   );
 }

@@ -167,6 +167,30 @@ html {
   }
 }
 
+/* ==========================================================================
+   FOOTER HEIGHT
+   The footer is revealed from under the page (see components/layout/footer),
+   which only works at a known height. It is capped at the window less the
+   header, so it is never too tall to reveal in full, even on a phone held
+   sideways; the wordmark inside shrinks to fit.
+   ========================================================================== */
+
+:root {
+  --footer-h: min(24rem, 100svh - var(--header-h));
+}
+
+@media (width >= 40rem) {
+  :root {
+    --footer-h: min(30rem, 100svh - var(--header-h));
+  }
+}
+
+@media (width >= 64rem) {
+  :root {
+    --footer-h: min(36rem, 100svh - var(--header-h));
+  }
+}
+
 @layer base {
   *,
   ::after,

@@ -33,8 +33,9 @@ Tokens themselves live in the `@theme` block in
 - There is no `tailwind.config.js`. New tokens go in `@theme` in `globals.css`.
 - Headings: `font-display text-h*`. One `<h1>` per page, in that page's hero.
 - Heroes are page-local; don't unify them into one component with variants.
-- The footer belongs in the root layout (moving it there is still pending), so
-  don't import it into new pages.
+- The footer is rendered once, in the root layout, so don't import it into
+  pages. It is revealed from under the page at a set height (`--footer-h`);
+  sections above it need no special styling for that.
 
 ## Commands
 

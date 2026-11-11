@@ -1,4 +1,5 @@
 import { CartProvider } from "components/cart/cart-context";
+import Footer from "components/layout/footer";
 import { WelcomeToast } from "components/welcome-toast";
 import { getCart } from "lib/shopify";
 import { baseUrl } from "lib/utils";
@@ -50,6 +51,7 @@ export default async function RootLayout({
             <WelcomeToast />
           </main>
         </CartProvider>
+        <Footer />
       </body>
     </html>
   );

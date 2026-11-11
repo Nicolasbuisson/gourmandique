@@ -217,6 +217,13 @@ bar, and the bar is set to exactly that. Anything that has to sit below the
 header or fill the screen under it reads the variable rather than guessing: the
 home hero uses `mt-(--header-h)` and `lg:h-[calc(100svh-var(--header-h))]`.
 
+**The footer has a set height, `--footer-h`.** It is revealed from under the
+page, which only works at a known height. It sits next to `--header-h` in
+`:root`: `24rem`, then `30rem` at `sm`, `36rem` at `lg`, each capped at the
+window less the header so the footer is never too tall to reveal in full. The
+wordmark inside shrinks to fit; anything else added to the footer has to fit
+the height too.
+
 **Prefer a single semantic class to a light/dark pair.** Now that there is no
 dark theme, `bg-white` is just `bg-surface-raised` and `text-black` is just
 `text-ink` — one class, and it tracks the palette if the palette moves.

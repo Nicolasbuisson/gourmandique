@@ -69,13 +69,14 @@ Shared chrome that no page declares for itself:
 - **Navbar** — [navbar/index.tsx](components/layout/navbar/index.tsx), rendered
   once in [layout.tsx](app/layout.tsx). Pulls the Shopify menu
   `next-js-frontend-header-menu`; the five links above must exist there.
-- **Footer** — ends every page in this document. It is currently imported
-  per-page in four places ([page.tsx](app/page.tsx),
-  [search/layout.tsx](app/search/layout.tsx),
-  [\[page\]/layout.tsx](app/[page]/layout.tsx), the product page). Since the
-  answer is now "every page, always", hoist it into the root layout and drop the
-  four imports. Footer is therefore **not** repeated in the per-page tables
-  below — assume it.
+- **Footer** — [footer.tsx](components/layout/footer.tsx), rendered once in
+  [layout.tsx](app/layout.tsx), after `<main>`. It ends every page in this
+  document, so it is **not** repeated in the per-page tables below — assume
+  it. It is a reveal footer: it sticks to the bottom of the window and the page
+  scrolls up off it like a curtain. A `clip-path` wrapper does the work, so the
+  last section of a page needs no background, `z-index` or margin for it. The
+  catch is a set height, `--footer-h` in [globals.css](app/globals.css);
+  content added to the footer has to fit it.
 
 **The hero is page-local.** Every page opens with one, but no two are alike —
 different layout, media, height and intent — so each page owns its own hero
