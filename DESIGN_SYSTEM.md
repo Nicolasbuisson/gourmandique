@@ -188,13 +188,14 @@ brand voice.
 
 ## Shape, depth, motion
 
-| Token           | Value                                          |
-| --------------- | ---------------------------------------------- |
-| `rounded-card`  | `0.75rem` — tiles, panels, images              |
-| `rounded-pill`  | full — buttons, badges, chips                  |
-| `shadow-soft`   | resting elevation                              |
-| `shadow-lifted` | hover / overlay elevation                      |
-| `ease-silk`     | `cubic-bezier(.22,.61,.36,1)` — default easing |
+| Token           | Value                                                                     |
+| --------------- | ------------------------------------------------------------------------- |
+| `rounded-card`  | `0.75rem` — tiles, panels, images                                         |
+| `rounded-pill`  | full — buttons, badges, chips                                             |
+| `shadow-soft`   | resting elevation                                                         |
+| `shadow-lifted` | hover / overlay elevation                                                 |
+| `ease-silk`     | `cubic-bezier(.22,.61,.36,1)` — default easing                            |
+| `ease-pen`      | `cubic-bezier(.215,.412,.355,.677)` — the wordmark's pen; button curtains |
 
 Shadows are **warm-tinted** (`oklch(.25 .03 85 / …)`). A neutral black shadow
 reads as dirt on a cream ground.

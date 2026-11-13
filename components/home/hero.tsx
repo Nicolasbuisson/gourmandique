@@ -1,10 +1,10 @@
+import { Button } from "components/button";
 import {
   GourmandiqueWordmark,
   WORDMARK_SECONDS,
 } from "components/gourmandique-wordmark";
 import { CurtainGate } from "components/home/curtain-gate";
 import Image from "next/image";
-import Link from "next/link";
 
 // The hero opens as a curtain: on mount it covers the whole page, fixed and
 // out of the flow, while the wordmark is written. Once the writing settles it
@@ -84,18 +84,12 @@ export function HomeHero() {
               designed for your special occasion.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/shop"
-                className="rounded-pill bg-accent px-6 py-3 text-sm font-medium text-on-accent transition-colors duration-200 ease-silk hover:bg-accent-hover"
-              >
-                Shop pastries
-              </Link>
-              <Link
+              <Button href="/shop" style="primary" text="Shop pastries" />
+              <Button
                 href="/wedding"
-                className="rounded-pill border border-accent px-6 py-3 text-sm font-medium text-accent transition-colors duration-200 ease-silk hover:bg-brand-50"
-              >
-                Plan your wedding cake
-              </Link>
+                style="secondary"
+                text="Plan your wedding cake"
+              />
             </div>
           </div>
 

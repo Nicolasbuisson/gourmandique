@@ -45,6 +45,8 @@ const PEN_SECONDS = 5;
 // average speed, finishing in about 23% of PEN_SECONDS, then the pen eases down
 // to ~0.5x by the e. Pull y1 and y2 further toward x1 and x2 to flatten it more,
 // or back toward 0.61 and 1 to sharpen it.
+//
+// Mirrored as the `ease-pen` token in app/globals.css; change both together.
 const PEN_EASING: readonly [number, number, number, number] = [
   0.215, 0.412, 0.355, 0.677,
 ];

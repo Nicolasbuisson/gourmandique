@@ -129,6 +129,9 @@
     0 2px 4px oklch(0.25 0.03 85 / 0.05), 0 12px 32px oklch(0.25 0.03 85 / 0.1);
 
   --ease-silk: cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* The wordmark's pen: a softened easeOutCubic. Mirrors PEN_EASING in
+     components/gourmandique-wordmark.tsx; change both together. */
+  --ease-pen: cubic-bezier(0.215, 0.412, 0.355, 0.677);
 }
 
 /* ==========================================================================
