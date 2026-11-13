@@ -3,18 +3,21 @@ import Link from "next/link";
 
 // A button, or a link that looks like one when given an `href`.
 //
-// On hover (and keyboard focus, and press) a curtain lifts off the button, as
-// the home hero's curtain lifts off the page. The curtain is the resting look:
-// an absolute layer over the whole button, carrying its own copy of the label.
-// Beneath it, in flow, is the hover look; its label is the one that sizes the
-// button and the one screen readers hear, so the curtain's copy is aria-hidden.
+// On hover (and keyboard focus, and press) two things happen at once:
 //
-// Because the curtain carries its label up with it, the text changes colour
-// exactly at the curtain's edge, which a colour transition couldn't do.
-// `overflow-hidden` clips the curtain as it leaves; the border sits outside
-// both and stays put.
+// - A curtain lifts off the button, as the home hero's curtain lifts off the
+//   page. The curtain is an absolute layer in the resting background; the
+//   button's own background beneath it is the hover one.
+// - The label flips, as FlipLink's does: the resting label rises out of the
+//   top of its line while a hover-coloured copy rises in from below. The line
+//   clips them, so a label is only ever seen in its own line.
 //
-// The lift uses `ease-pen`, the same curve the wordmark is written with.
+// Both use `ease-pen`, the curve the wordmark is written with.
+//
+// The resting label is in flow, so it sizes the button and is the one screen
+// readers hear; the arriving copy is aria-hidden. `overflow-hidden` on the
+// button clips the curtain as it leaves; the border sits outside both and
+// stays put.
 
 type ButtonProps = {
   text: string;
@@ -25,32 +28,47 @@ type ButtonProps = {
 };
 
 const BASE =
-  "group relative inline-flex items-center justify-center overflow-hidden border-3 border-accent px-6 py-3 text-sm font-medium";
+  "group relative inline-flex items-center justify-center overflow-hidden border-3 border-accent px-6 py-3 text-sm font-medium uppercase";
 
-const CURTAIN =
-  "absolute inset-0 flex items-center justify-center transition-transform duration-300 ease-pen " +
-  "group-hover:-translate-y-full group-focus-visible:-translate-y-full group-active:-translate-y-full " +
-  "motion-reduce:transition-none";
+const MOVE =
+  "transition-transform duration-300 ease-pen motion-reduce:transition-none";
+
+const LIFT =
+  "group-hover:-translate-y-full group-focus-visible:-translate-y-full group-active:-translate-y-full";
+
+const CURTAIN = clsx("absolute inset-0", MOVE, LIFT);
+
+const LEAVING = clsx("block", MOVE, LIFT);
+
+const ARRIVING = clsx(
+  "absolute inset-0 translate-y-full",
+  MOVE,
+  "group-hover:translate-y-0 group-focus-visible:translate-y-0 group-active:translate-y-0",
+);
 
 // Each style hovers to the other's resting look.
 const STYLES = {
   primary: {
-    revealed: "bg-surface text-accent",
-    curtain: "bg-accent text-on-accent",
+    rest: { bg: "bg-accent", text: "text-on-accent" },
+    hover: { bg: "bg-surface", text: "text-accent" },
   },
   secondary: {
-    revealed: "bg-accent text-on-accent",
-    curtain: "bg-surface text-accent",
+    rest: { bg: "bg-surface", text: "text-accent" },
+    hover: { bg: "bg-accent", text: "text-on-accent" },
   },
 } as const;
 
 export function Button({ text, onClick, href, style, className }: ButtonProps) {
-  const classes = clsx(BASE, STYLES[style].revealed, className);
-  const label = (
+  const { rest, hover } = STYLES[style];
+  const classes = clsx(BASE, hover.bg, className);
+  const content = (
     <>
-      {text}
-      <span aria-hidden className={clsx(CURTAIN, STYLES[style].curtain)}>
-        {text}
+      <span aria-hidden className={clsx(CURTAIN, rest.bg)} />
+      <span className="relative overflow-hidden whitespace-nowrap">
+        <span className={clsx(LEAVING, rest.text)}>{text}</span>
+        <span aria-hidden className={clsx(ARRIVING, hover.text)}>
+          {text}
+        </span>
       </span>
     </>
   );
@@ -58,14 +76,14 @@ export function Button({ text, onClick, href, style, className }: ButtonProps) {
   if (href) {
     return (
       <Link href={href} onClick={onClick} className={classes}>
-        {label}
+        {content}
       </Link>
     );
   }
 
   return (
     <button type="button" onClick={onClick} className={classes}>
-      {label}
+      {content}
     </button>
   );
 }
