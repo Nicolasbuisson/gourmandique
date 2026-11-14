@@ -36,6 +36,9 @@ Tokens themselves live in the `@theme` block in
 - The footer is rendered once, in the root layout, so don't import it into
   pages. It is revealed from under the page at a set height (`--footer-h`);
   sections above it need no special styling for that.
+- When adding the website copy, pass the copy in directly as props. Do not create
+  additional files whose only purpose is to store the content so that it can imported
+  into other files.
 
 ## Commands
 

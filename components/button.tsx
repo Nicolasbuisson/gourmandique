@@ -24,11 +24,15 @@ type ButtonProps = {
   onClick?: () => void;
   href?: string;
   style: "primary" | "secondary";
+  // The ground the button sits on. On `accent` (e.g. a CtaBanner) the accent
+  // fill would vanish into the section, so the roles swap: primary rests in
+  // parchment, secondary in the accent with a parchment border.
+  ground?: "surface" | "accent";
   className?: string;
 };
 
 const BASE =
-  "group relative inline-flex items-center justify-center overflow-hidden border-3 border-accent px-6 py-3 text-sm font-medium uppercase";
+  "group relative inline-flex items-center justify-center overflow-hidden border-3 px-6 py-3 text-sm font-medium uppercase";
 
 const MOVE =
   "transition-transform duration-300 ease-pen motion-reduce:transition-none";
@@ -48,19 +52,41 @@ const ARRIVING = clsx(
 
 // Each style hovers to the other's resting look.
 const STYLES = {
-  primary: {
-    rest: { bg: "bg-accent", text: "text-on-accent" },
-    hover: { bg: "bg-surface", text: "text-accent" },
+  surface: {
+    border: "border-accent",
+    primary: {
+      rest: { bg: "bg-accent", text: "text-on-accent" },
+      hover: { bg: "bg-surface", text: "text-accent" },
+    },
+    secondary: {
+      rest: { bg: "bg-surface", text: "text-accent" },
+      hover: { bg: "bg-accent", text: "text-on-accent" },
+    },
   },
-  secondary: {
-    rest: { bg: "bg-surface", text: "text-accent" },
-    hover: { bg: "bg-accent", text: "text-on-accent" },
+  accent: {
+    border: "border-on-accent",
+    primary: {
+      rest: { bg: "bg-surface", text: "text-accent" },
+      hover: { bg: "bg-accent", text: "text-on-accent" },
+    },
+    secondary: {
+      rest: { bg: "bg-accent", text: "text-on-accent" },
+      hover: { bg: "bg-surface", text: "text-accent" },
+    },
   },
 } as const;
 
-export function Button({ text, onClick, href, style, className }: ButtonProps) {
-  const { rest, hover } = STYLES[style];
-  const classes = clsx(BASE, hover.bg, className);
+export function Button({
+  text,
+  onClick,
+  href,
+  style,
+  ground = "surface",
+  className,
+}: ButtonProps) {
+  const { border, [style]: tone } = STYLES[ground];
+  const { rest, hover } = tone;
+  const classes = clsx(BASE, border, hover.bg, className);
   const content = (
     <>
       <span aria-hidden className={clsx(CURTAIN, rest.bg)} />
