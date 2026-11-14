@@ -1,10 +1,13 @@
-import { Button } from "components/button";
 import clsx from "clsx";
+import { Button } from "components/button";
 import Image from "next/image";
-import type { CtaContent } from "lib/content/cta";
+import type { ReactNode } from "react";
 
 // The closing ask on a page: a full-bleed accent band with a title, a line of
 // copy and two buttons, over a strip of pastry and wedding-cake photos.
+//
+// The title (`children`) and `body` are nodes, so a page can break them where it
+// wants with a <br />.
 //
 // The photos are decorative — the copy carries the meaning — so they render
 // with empty alt text behind an accent wash that keeps `text-on-accent` legible.
@@ -13,14 +16,24 @@ import type { CtaContent } from "lib/content/cta";
 // It is usually the last section before the footer. The footer's reveal needs
 // nothing from it (see PAGE_STRUCTURE.md, "Page shell").
 
-type CtaBannerProps = CtaContent & {
+type CtaLink = {
+  text: string;
+  href: string;
+};
+
+type CtaBannerProps = {
   id?: string;
+  children: ReactNode;
+  body: ReactNode;
+  primary: CtaLink;
+  secondary?: CtaLink;
+  // Decorative background photos — pastries and wedding cakes. Up to four.
+  images: string[];
 };
 
 export function CtaBanner({
   id = "cta",
-  eyebrow,
-  title,
+  children,
   body,
   primary,
   secondary,
@@ -52,18 +65,20 @@ export function CtaBanner({
             />
           </div>
         ))}
-        <div className="absolute inset-0 bg-accent/85" />
+        <div className="absolute inset-0 bg-accent/75" />
       </div>
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-6 px-6 text-center">
-        {eyebrow ? (
-          <p className="text-eyebrow text-on-accent/80 uppercase">{eyebrow}</p>
-        ) : null}
         <h2 id={titleId} className="max-w-3xl font-display text-h2">
-          {title}
+          {children}
         </h2>
-        <p className="max-w-xl text-lg text-on-accent/85">{body}</p>
-        <div className="mt-2 flex flex-wrap justify-center gap-3">
+        <p className="max-w-xl text-lg leading-[1.2] text-on-accent/85">
+          {body}
+        </p>
+        {/* Stacked below `sm`, the grid sizes to the wider button and stretches
+            the other to match; from `sm` up they sit side by side at their own
+            widths. */}
+        <div className="mt-2 grid gap-3 sm:grid-flow-col sm:auto-cols-max">
           <Button
             href={primary.href}
             text={primary.text}

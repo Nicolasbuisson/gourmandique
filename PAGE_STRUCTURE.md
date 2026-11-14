@@ -124,13 +124,13 @@ These five sections repeat across pages, or are built to. Build each **once** in
 `components/sections/`, driven by props, with page-specific copy passed in — not
 copy-pasted per page. (Heroes are the exception — see above.)
 
-| Component      | File                                   | Used on       | Shape                                               |
-| -------------- | -------------------------------------- | ------------- | --------------------------------------------------- |
-| `Gallery`      | `components/sections/gallery.tsx`      | Home          | `items[]`, `columns`, `cta`                         |
-| `Testimonials` | `components/sections/testimonials.tsx` | Home, Wedding | `items[]` of `{ quote, name, occasion }`            |
-| `Faq`          | `components/sections/faq.tsx`          | Home, Wedding | `items[]` of `{ q, a }`                             |
-| `Stats`        | `components/sections/stats.tsx`        | Home, About   | `items[]` of `{ value, label }`                     |
-| `CtaBanner`    | `components/sections/cta-banner.tsx`   | Home, About   | `title`, `body`, `primary`, `secondary`, `images[]` |
+| Component      | File                                   | Used on       | Shape                                                          |
+| -------------- | -------------------------------------- | ------------- | -------------------------------------------------------------- |
+| `Gallery`      | `components/sections/gallery.tsx`      | Home          | `items[]`, `columns`, `cta`                                    |
+| `Testimonials` | `components/sections/testimonials.tsx` | Home, Wedding | `items[]` of `{ quote, name, occasion }`                       |
+| `Faq`          | `components/sections/faq.tsx`          | Home, Wedding | `items[]` of `{ q, a }`                                        |
+| `Stats`        | `components/sections/stats.tsx`        | Home, About   | `items[]` of `{ value, label }`                                |
+| `CtaBanner`    | `components/sections/cta-banner.tsx`   | Home, About   | `children` (title), `body`, `primary`, `secondary`, `images[]` |
 
 `Faq` should render as real `<details>`/`<summary>` elements — open by default
 is fine, and it needs no client JavaScript. Emit FAQPage JSON-LD from the same
@@ -145,7 +145,8 @@ motion, so like the heroes it is page-local: `GalleryWedding`, built as
 `testimonials.ts`, `stats.ts`, `gallery.ts`, `gallery-wedding.ts`) — not inline
 in JSX. Copy changes
 then touch one file, and the Wedding FAQ can share the type while keeping its
-own list.
+own list. The exception is `CtaBanner`: its copy is a few lines and the title is
+JSX, as is the body (so the page can set line breaks), so each page passes it inline as props.
 
 ---
 
