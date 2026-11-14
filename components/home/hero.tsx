@@ -84,12 +84,8 @@ export function HomeHero() {
               designed for your special occasion.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button href="/shop" style="primary" text="Shop pastries" />
-              <Button
-                href="/wedding"
-                style="secondary"
-                text="Plan your wedding cake"
-              />
+              <Button href="/shop" style="primary" text="Pastries" />
+              <Button href="/wedding" style="secondary" text="Wedding Cakes" />
             </div>
           </div>
 
