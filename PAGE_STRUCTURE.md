@@ -132,7 +132,7 @@ copy-pasted per page. (Heroes are the exception — see above.)
 | `Stats`        | `components/sections/stats.tsx`        | Home, About   | `eyebrow`, `title`, `items[]` of `{ value, label, suffix? }`   |
 | `CtaBanner`    | `components/sections/cta-banner.tsx`   | Home, About   | `children` (title), `body`, `primary`, `secondary`, `images[]` |
 
-`Faq` is a client-side accordion: one answer open at a time (the first is open
+`Faq` is a client-side accordion: one answer open at a time (all closed
 on load), each opening with the grid-row trick (`grid-template-rows` from `0fr`
 to `1fr`), and the "+" turning into a "−" by shrinking its vertical bar's height
 to zero. Closed answers are `inert`. It emits FAQPage JSON-LD from the same

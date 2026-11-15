@@ -33,7 +33,7 @@ type FaqProps = {
 
 export function Faq({ id = "faq", eyebrow, title, items }: FaqProps) {
   const titleId = `${id}-title`;
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const jsonLd = {
     "@context": "https://schema.org",
