@@ -34,7 +34,7 @@ type StatsProps = {
 const DURATION = 1.4;
 // `ease-silk` from the design system.
 const EASE = [0.22, 0.61, 0.36, 1] as const;
-const OFFSET_Y = -60;
+const OFFSET_Y = 60;
 
 const format = (n: number) => Math.round(n).toLocaleString("en-US");
 
@@ -94,7 +94,7 @@ function StatCard({ item }: { item: StatItem }) {
       transition={
         reduceMotion ? { duration: 0 } : { duration: DURATION, ease: EASE }
       }
-      className="flex flex-col gap-3 rounded-card bg-surface-raised p-8 shadow-soft md:p-10"
+      className="flex flex-col rounded-card bg-surface-raised p-6 shadow-soft"
     >
       <p className="font-display text-h1 text-accent tabular-nums">
         <span aria-hidden>
