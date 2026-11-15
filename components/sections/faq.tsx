@@ -102,7 +102,7 @@ function FaqRow({
           onClick={onToggle}
           className="flex w-full items-center justify-between gap-6 py-6 text-left font-display text-h4 text-ink"
         >
-          <span>{item.q}</span>
+          <span className="font-medium">{item.q}</span>
           <span aria-hidden className="relative size-4 shrink-0 text-accent">
             {/* Horizontal bar — always there. */}
             <span className="absolute top-1/2 left-0 h-0.5 w-full -translate-y-1/2 bg-current" />
