@@ -1,4 +1,5 @@
 import { Carousel } from "components/carousel";
+import { FloatingGallery } from "components/floatingGallery/floatingGallery";
 import { ThreeItemGrid } from "components/grid/three-items";
 import { HomeHero } from "components/home/hero";
 import { Header } from "components/layout/navigation/header";
@@ -21,6 +22,7 @@ export default function HomePage() {
       <Header />
       <HomeHero />
       <ThreeItemGrid />
+      <FloatingGallery />
       <Carousel />
       {/* Mock figures until the real ones are in. */}
       <Stats
