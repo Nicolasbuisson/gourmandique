@@ -1,13 +1,16 @@
 import { GridTileImage } from "components/grid/tile";
+import { localizePath, type Locale } from "lib/i18n";
 import { getCollectionProducts } from "lib/shopify";
 import type { Product } from "lib/shopify/types";
 import Link from "next/link";
 
 function ThreeItemGridItem({
+  lang,
   item,
   size,
   priority,
 }: {
+  lang: Locale;
   item: Product;
   size: "full" | "half";
   priority?: boolean;
@@ -22,7 +25,7 @@ function ThreeItemGridItem({
     >
       <Link
         className="relative block aspect-square h-full w-full"
-        href={`/product/${item.handle}`}
+        href={localizePath(lang, `/product/${item.handle}`)}
         prefetch={true}
       >
         <GridTileImage
@@ -47,7 +50,7 @@ function ThreeItemGridItem({
   );
 }
 
-export async function ThreeItemGrid() {
+export async function ThreeItemGrid({ lang }: { lang: Locale }) {
   // Collections that start with `hidden-*` are hidden from the search page.
   const homepageItems = await getCollectionProducts({
     collection: "hidden-homepage-featured-items",
@@ -59,9 +62,19 @@ export async function ThreeItemGrid() {
 
   return (
     <section className="mx-auto grid max-w-(--breakpoint-2xl) gap-4 px-4 pb-4 md:grid-cols-6 md:grid-rows-2 lg:max-h-[calc(100vh-200px)]">
-      <ThreeItemGridItem size="full" item={firstProduct} priority={true} />
-      <ThreeItemGridItem size="half" item={secondProduct} priority={true} />
-      <ThreeItemGridItem size="half" item={thirdProduct} />
+      <ThreeItemGridItem
+        lang={lang}
+        size="full"
+        item={firstProduct}
+        priority={true}
+      />
+      <ThreeItemGridItem
+        lang={lang}
+        size="half"
+        item={secondProduct}
+        priority={true}
+      />
+      <ThreeItemGridItem lang={lang} size="half" item={thirdProduct} />
     </section>
   );
 }

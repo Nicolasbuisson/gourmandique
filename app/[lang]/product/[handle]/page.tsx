@@ -1,7 +1,9 @@
 import { GridTileImage } from "components/grid/tile";
 import { Gallery } from "components/product/gallery";
 import { ProductDescription } from "components/product/product-description";
+import { getDictionary } from "dictionaries";
 import { HIDDEN_PRODUCT_TAG } from "lib/constants";
+import { asLocale, localizePath, type Locale } from "lib/i18n";
 import { getProduct, getProductRecommendations } from "lib/shopify";
 import type { Image } from "lib/shopify/types";
 import type { Metadata } from "next";
@@ -10,7 +12,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export async function generateMetadata(props: {
-  params: Promise<{ handle: string }>;
+  params: Promise<{ lang: string; handle: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
   const product = await getProduct(params.handle);
@@ -47,9 +49,10 @@ export async function generateMetadata(props: {
 }
 
 export default async function ProductPage(props: {
-  params: Promise<{ handle: string }>;
+  params: Promise<{ lang: string; handle: string }>;
 }) {
   const params = await props.params;
+  const { product: labels } = await getDictionary(asLocale(params.lang));
   const product = await getProduct(params.handle);
 
   if (!product) return notFound();
@@ -98,24 +101,36 @@ export default async function ProductPage(props: {
 
           <div className="basis-full lg:basis-2/6">
             <Suspense fallback={null}>
-              <ProductDescription product={product} />
+              <ProductDescription product={product} labels={labels} />
             </Suspense>
           </div>
         </div>
-        <RelatedProducts id={product.id} />
+        <RelatedProducts
+          lang={asLocale(params.lang)}
+          id={product.id}
+          title={labels.related}
+        />
       </div>
     </>
   );
 }
 
-async function RelatedProducts({ id }: { id: string }) {
+async function RelatedProducts({
+  lang,
+  id,
+  title,
+}: {
+  lang: Locale;
+  id: string;
+  title: string;
+}) {
   const relatedProducts = await getProductRecommendations(id);
 
   if (!relatedProducts.length) return null;
 
   return (
     <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
+      <h2 className="mb-4 text-2xl font-bold">{title}</h2>
       <ul className="flex w-full gap-4 overflow-x-auto pt-1">
         {relatedProducts.map((product) => (
           <li
@@ -124,7 +139,7 @@ async function RelatedProducts({ id }: { id: string }) {
           >
             <Link
               className="relative h-full w-full"
-              href={`/product/${product.handle}`}
+              href={localizePath(lang, `/product/${product.handle}`)}
               prefetch={true}
             >
               <GridTileImage

@@ -1,0 +1,151 @@
+{
+  "metadata": {
+    "home": {
+      "description": "Gourmandique bakes pastries in small batches and designs wedding cakes with you. Order online for pickup or delivery."
+    },
+    "shop": {
+      "title": "Shop",
+      "description": "Browse Gourmandique's pastries and cakes."
+    }
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "fr": "Français"
+  },
+  "header": {
+    "home": "Gourmandique, home",
+    "menu": "Menu",
+    "close": "Close",
+    "shop": "Shop",
+    "cart": "Cart"
+  },
+  "nav": {
+    "links": {
+      "home": "Home",
+      "shop": "Shop",
+      "wedding": "Wedding",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "images": {
+      "home": "A wedding cake",
+      "shop": "Pastries",
+      "wedding": "A wedding cake",
+      "about": "Meriem, the founder",
+      "contact": "The Gourmandique logo"
+    },
+    "credits": {
+      "madeBy": "Made by:",
+      "typography": "Typography:",
+      "images": "Images:",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions"
+    }
+  },
+  "footer": {
+    "label": "Footer"
+  },
+  "home": {
+    "hero": {
+      "title": "Pastries for every day cravings.",
+      "titleEmphasis": "Wedding Cakes for your big day.",
+      "body": "Homemade tarts and petits gâteaux, and unique wedding cakes designed for your special occasion.",
+      "primaryCta": "Pastries",
+      "secondaryCta": "Wedding Cakes",
+      "images": [
+        "A tray of fresh pastries",
+        "Assorted tarts and petits gâteaux",
+        "A three-tier white wedding cake dressed with roses, gerberas and baby's breath",
+        "A wedding cake on its stand"
+      ],
+      "labels": [
+        { "eyebrow": "Pâtisserie", "title": "Baked in small batches" },
+        { "eyebrow": "Wedding cakes", "title": "Designed with you" }
+      ]
+    },
+    "gallery": {
+      "title": "Floating Images Gallery",
+      "subtitle": "Next.js and GSAP"
+    },
+    "stats": {
+      "eyebrow": "By the numbers",
+      "title": "Small batches, adding up",
+      "items": [
+        {
+          "value": 2400,
+          "suffix": "+",
+          "label": "Cakes and pastry boxes baked"
+        },
+        { "value": 180, "suffix": "+", "label": "Weddings served" },
+        { "value": 12, "label": "Years baking" }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "title": "Before you order",
+      "items": [
+        {
+          "q": "How far ahead should I order?",
+          "a": "Give us 48 hours for pastries and two weeks for a custom celebration cake. Wedding cakes are best booked three to six months ahead, as we take a limited number each weekend."
+        },
+        {
+          "q": "Do you deliver?",
+          "a": "Yes, within our local delivery zone, with the fee shown at checkout. You can also pick your order up from our kitchen at no charge; we send the pickup details once your order is confirmed."
+        },
+        {
+          "q": "Can you accommodate allergies?",
+          "a": "We offer gluten-free and dairy-free options for many of our cakes. Our kitchen handles nuts, gluten, dairy and eggs, so we cannot guarantee that any item is free of traces of them."
+        },
+        {
+          "q": "Can I order a custom design?",
+          "a": "Absolutely. Tell us the occasion, the number of guests and any inspiration you have, and we will sketch a design and quote it for you before anything is baked."
+        },
+        {
+          "q": "How should I store my pastries?",
+          "a": "Most pastries are best the day they are made. Keep cream-filled pieces and cakes refrigerated, and take them out about 30 minutes before serving so the flavours come through."
+        }
+      ]
+    },
+    "cta": {
+      "title": ["Something sweet for today,", "or the cake for your big day"],
+      "body": [
+        "Order pastries baked in small batches,",
+        "or start planning a wedding cake designed with you."
+      ],
+      "primary": "Pastries",
+      "secondary": "Wedding cake"
+    }
+  },
+  "shop": {
+    "collections": "Collections",
+    "all": "All",
+    "sortBy": "Sort by",
+    "sort": {
+      "relevance": "Relevance",
+      "trending-desc": "Trending",
+      "latest-desc": "Latest arrivals",
+      "price-asc": "Price: Low to high",
+      "price-desc": "Price: High to low"
+    },
+    "noResults": "There are no products that match",
+    "resultsOne": "Showing {count} result for",
+    "resultsMany": "Showing {count} results for",
+    "emptyCollection": "No products found in this collection",
+    "collectionProducts": "{title} products"
+  },
+  "product": {
+    "related": "Related Products",
+    "addToCart": "Add To Cart",
+    "outOfStock": "Out Of Stock",
+    "selectOption": "Please select an option"
+  },
+  "page": {
+    "lastUpdated": "This document was last updated on {date}."
+  },
+  "error": {
+    "title": "Oh no!",
+    "body": "There was an issue with our storefront. This could be a temporary issue, please try your action again.",
+    "retry": "Try Again"
+  }
+}

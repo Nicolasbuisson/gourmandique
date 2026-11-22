@@ -100,7 +100,7 @@ opt-out is stated twice:
 
 - `html { color-scheme: only light }` in [globals.css](app/globals.css)
 - `export const viewport = { colorScheme: "only light" }` in
-  [layout.tsx](app/layout.tsx), which lands earlier in the parse and prevents a
+  [layout.tsx](app/[lang]/layout.tsx), which lands earlier in the parse and prevents a
   flash of darkened content
 
 **`only light` is the opt-out; plain `light` is not.** `light` states what the

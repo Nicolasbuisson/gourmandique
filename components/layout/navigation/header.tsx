@@ -1,18 +1,35 @@
 "use client";
 import clsx from "clsx";
+import { LocaleSwitcher } from "components/locale-switcher";
+import type { Dictionary } from "dictionaries";
+import { localizePath, type Locale } from "lib/i18n";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
 import { background, opacity } from "./anim";
 import { Nav } from "./navigation";
 
-export const Header = () => {
+export const Header = ({
+  lang,
+  labels,
+  nav,
+  languageLabels,
+}: {
+  lang: Locale;
+  labels: Dictionary["header"];
+  nav: Dictionary["nav"];
+  languageLabels: Dictionary["languageSwitcher"];
+}) => {
   const [isActive, setIsActive] = useState(false);
 
   return (
     <div className="fixed inset-x-0 top-0 z-40 border-b border-line-strong bg-surface px-2.5 sm:px-5">
       <div className="relative flex h-(--header-h) items-center justify-center text-xs font-normal uppercase text-ink sm:text-[15px]">
-        <Link href="/" className="absolute left-0">
+        <Link
+          href={localizePath(lang, "/")}
+          aria-label={labels.home}
+          className="absolute left-0"
+        >
           Gourmandique
         </Link>
         <div
@@ -36,14 +53,14 @@ export const Header = () => {
               variants={opacity}
               animate={!isActive ? "open" : "closed"}
             >
-              Menu
+              {labels.menu}
             </motion.p>
             <motion.p
               variants={opacity}
               animate={isActive ? "open" : "closed"}
               className="absolute opacity-0"
             >
-              Close
+              {labels.close}
             </motion.p>
           </div>
         </div>
@@ -52,7 +69,14 @@ export const Header = () => {
           animate={!isActive ? "open" : "closed"}
           className="absolute right-0 flex gap-7.5"
         >
-          <p className="hidden cursor-pointer sm:block">Shop</p>
+          <LocaleSwitcher
+            lang={lang}
+            labels={languageLabels}
+            className="hidden sm:block"
+          />
+          <Link href={localizePath(lang, "/shop")} className="hidden sm:block">
+            {labels.shop}
+          </Link>
           <div className="flex cursor-pointer items-center justify-center gap-2">
             <svg
               width="19"
@@ -69,7 +93,7 @@ export const Header = () => {
                 strokeLinejoin="round"
               ></path>
             </svg>
-            <p>Cart(0)</p>
+            <p>{labels.cart}(0)</p>
           </div>
         </motion.div>
       </div>
@@ -79,7 +103,9 @@ export const Header = () => {
         animate={isActive ? "open" : "closed"}
         className="absolute top-full left-0 h-full w-full bg-soot/50"
       ></motion.div>
-      <AnimatePresence mode="wait">{isActive && <Nav />}</AnimatePresence>
+      <AnimatePresence mode="wait">
+        {isActive && <Nav lang={lang} labels={nav} />}
+      </AnimatePresence>
     </div>
   );
 };

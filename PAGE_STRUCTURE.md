@@ -15,19 +15,24 @@ feel and motion, not as spec; the Purpose and Content columns still win.
 
 ## Route map
 
-| Page    | Route                | File                             | Status                               |
-| ------- | -------------------- | -------------------------------- | ------------------------------------ |
-| Home    | `/`                  | `app/page.tsx`                   | Exists — template content, replace   |
-| Shop    | `/shop`              | `app/shop/page.tsx`              | Rename of `app/search/` — see below  |
-| Shop    | `/shop/[collection]` | `app/shop/[collection]/page.tsx` | Rename of `app/search/[collection]/` |
-| Wedding | `/wedding`           | `app/wedding/page.tsx`           | To build                             |
-| About   | `/about`             | `app/about/page.tsx`             | To build                             |
-| Contact | `/contact`           | `app/contact/page.tsx`           | To build                             |
-| Product | `/product/[handle]`  | `app/product/[handle]/page.tsx`  | Exists — template                    |
+Every route below is served once per language, under a locale prefix:
+`/en/shop`, `/fr/shop` (see [Languages](#languages)). The routes in this table
+are written without it, and so is every path elsewhere in this document; the
+files all sit under `app/[lang]/`.
 
-**`app/[page]/page.tsx` is a Shopify-CMS catch-all.** Static segments win over
-dynamic ones in Next.js routing, so creating `app/about/` shadows any Shopify
-page with the handle `about`. That is intended — just don't expect a Shopify
+| Page    | Route                | File                                    | Status                                      |
+| ------- | -------------------- | --------------------------------------- | ------------------------------------------- |
+| Home    | `/`                  | `app/[lang]/page.tsx`                   | Exists — template content, replace          |
+| Shop    | `/shop`              | `app/[lang]/shop/page.tsx`              | Rename of `app/[lang]/search/` — see below  |
+| Shop    | `/shop/[collection]` | `app/[lang]/shop/[collection]/page.tsx` | Rename of `app/[lang]/search/[collection]/` |
+| Wedding | `/wedding`           | `app/[lang]/wedding/page.tsx`           | To build                                    |
+| About   | `/about`             | `app/[lang]/about/page.tsx`             | To build                                    |
+| Contact | `/contact`           | `app/[lang]/contact/page.tsx`           | To build                                    |
+| Product | `/product/[handle]`  | `app/[lang]/product/[handle]/page.tsx`  | Exists — template                           |
+
+**`app/[lang]/[page]/page.tsx` is a Shopify-CMS catch-all.** Static segments
+win over dynamic ones in Next.js routing, so creating `app/[lang]/about/`
+shadows any Shopify page with the handle `about`. That is intended — just don't expect a Shopify
 page named `wedding` or `contact` to render once these folders exist.
 
 ### `/search` → `/shop`
@@ -37,7 +42,7 @@ page: the navbar search box lands on `/shop?q=…`, and the products section
 renders query results when `q` is present and the full catalogue when it isn't.
 That keeps one browse surface with one filter and sort UI.
 
-Move `app/search/` → `app/shop/` (`page.tsx`, `layout.tsx`, `loading.tsx`,
+Move `app/[lang]/search/` → `app/[lang]/shop/` (`page.tsx`, `layout.tsx`, `loading.tsx`,
 `children-wrapper.tsx`, `[collection]/page.tsx`,
 `[collection]/opengraph-image.tsx`), then fix the five places that hardcode the
 old path:
@@ -51,6 +56,9 @@ old path:
   the unconfigured and configured branches
 - [lib/shopify/index.ts:423](lib/shopify/index.ts#L423) — `getMenu`'s
   `.replace("/collections", "/search")`, which rewrites Shopify menu URLs
+
+These paths stay locale-free: the components that render them add the prefix
+(`Collections` runs each collection's `path` through `localizePath`).
 
 The sidebar links, the "All" entry and the Shopify header menu all break
 silently if any one of these is missed — they produce valid-looking links to a 404. Grep for `/search` after the move; it should return nothing outside
@@ -67,10 +75,10 @@ Add a permanent redirect in `next.config.ts` from `/search` to `/shop`
 Shared chrome that no page declares for itself:
 
 - **Navbar** — [navbar/index.tsx](components/layout/navbar/index.tsx), rendered
-  once in [layout.tsx](app/layout.tsx). Pulls the Shopify menu
+  once in [layout.tsx](app/[lang]/layout.tsx). Pulls the Shopify menu
   `next-js-frontend-header-menu`; the five links above must exist there.
 - **Footer** — [footer.tsx](components/layout/footer.tsx), rendered once in
-  [layout.tsx](app/layout.tsx), after `<main>`. It ends every page in this
+  [layout.tsx](app/[lang]/layout.tsx), after `<main>`. It ends every page in this
   document, so it is **not** repeated in the per-page tables below — assume
   it. It is a reveal footer: it sticks to the bottom of the window and the page
   scrolls up off it like a curtain. A `clip-path` wrapper does the work, so the
@@ -118,6 +126,56 @@ Every section follows the same contract so pages stay composable:
 
 ---
 
+## Languages
+
+The site is in English and French, following the Next.js
+[internationalization guide](https://nextjs.org/docs/app/guides/internationalization):
+a `[lang]` segment at the top of `app/`, a proxy that picks the locale, and one
+dictionary per locale.
+
+- **Routes.** Every page sits under [app/[lang]/](app/[lang]/), whose
+  [layout.tsx](app/[lang]/layout.tsx) is the root layout. It sets
+  `<html lang>`, prerenders `en` and `fr` through `generateStaticParams`, and
+  404s any other value. Only the API route and the metadata files (`robots.ts`,
+  `sitemap.ts`, the icons) stay outside it. Slugs are not translated:
+  `/fr/wedding`, not `/fr/mariage`.
+- **Choosing the locale.** [proxy.ts](proxy.ts) (Next's renamed middleware)
+  redirects any URL without a prefix, `/` included, to the visitor's last
+  locale (the `NEXT_LOCALE` cookie it sets on every prefixed request), then
+  to their browser's `Accept-Language`, then to `defaultLocale` (`en`). Paths
+  with a file extension, `/api` and `/_next` are left alone.
+- **Copy.** [dictionaries/en.json](dictionaries/en.json) and
+  [dictionaries/fr.json](dictionaries/fr.json) hold every user-facing string,
+  grouped by where it appears (`header`, `nav`, `home.hero`, `home.faq`,
+  `shop`, `product`, …). They are the only content files. `en.json` defines
+  the type; `fr.json` must match it or the build fails. Pages and layouts call
+  `getDictionary(lang)` and pass the strings down; client components get them
+  as props too. Copy that breaks onto lines (the CTA title) is an array of
+  lines, joined with `<br />` by the page. Placeholders use `{name}` and are
+  filled with `format()` from `dictionaries/`.
+- **Links.** [lib/i18n.ts](lib/i18n.ts) has `localizePath(lang, "/shop")` for
+  every internal link, `switchLocalePath` for the language switcher, and
+  `intlLocale` (`en-CA`, `fr-CA`) for `Intl` number and date formatting.
+- **Switching.** `LocaleSwitcher` (EN / FR) sits in the header and in the
+  footer's bottom row, and links to the same page in the other language.
+- **SEO.** The home page declares `alternates.languages` (hreflang), and the
+  sitemap lists every route in both locales with its alternates.
+
+Not translated yet:
+
+- **Shopify content** — product titles, descriptions, collections and CMS pages
+  come back in the store's default language. Translating them needs the
+  Shopify Translate & Adapt app plus `@inContext(language: …)` on the
+  Storefront queries in `lib/shopify/`, with the locale passed through from the
+  page.
+- **Unused template components** — `components/layout/navbar/` and the cart
+  modal it opens still carry English strings. They aren't rendered; translate
+  them if they come back, or delete them.
+- **`WelcomeToast`** — still the template's Vercel promo, in English. Remove it
+  rather than translate it.
+
+---
+
 ## Shared section components
 
 These five sections repeat across pages, or are built to. Build each **once** in
@@ -147,10 +205,11 @@ motion, so like the heroes it is page-local: `GalleryWedding`, built as
 `GalleryWedding` in `components/wedding/gallery-wedding.tsx`. Don't fold it into
 `Gallery` behind a prop.
 
-**Copy is passed in as props** from the page that renders the section — there
-are no content-only modules to import (see CLAUDE.md). Each component exports
-its item type (`FaqItem`, `StatItem`, …), so the Wedding FAQ shares the type
-while keeping its own list.
+**Copy is passed in as props** from the page that renders the section, which
+reads it from the dictionary (see [Languages](#languages)). Sections never
+import copy themselves. Each component exports its item type (`FaqItem`,
+`StatItem`, …), so the Wedding FAQ shares the type while keeping its own list
+(`home.faq.items` and `wedding.faq.items` in the dictionaries).
 
 ---
 
@@ -182,11 +241,11 @@ included. The curtain ends `visibility: hidden`, so the `<h1>` lives in the
 in-flow hero, not inside it.
 
 Replace the current `ThreeItemGrid` + `Carousel` body of
-[page.tsx](app/page.tsx). Both are template components; `ThreeItemGrid` can be
+[page.tsx](app/[lang]/page.tsx). Both are template components; `ThreeItemGrid` can be
 retired or recast as the Gallery.
 
-Metadata in that file still carries the Vercel Commerce description — rewrite it
-with the real title and description.
+Its description now comes from `metadata.home` in the dictionaries; it still
+needs a real title.
 
 ---
 
@@ -195,17 +254,17 @@ with the real title and description.
 A browse page, not a landing page. The hero stays short; products start above
 the fold on desktop.
 
-| #   | Section       | `id`       | Purpose                           | Content / data                                                                                                                                                                | Inspiration |
-| --- | ------------- | ---------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| 1   | Hero          | `hero`     | Orient, then get out of the way   | **Page-local**, and the shortest on the site. Title + one line, no image or a thin banner. Static. Lives in `app/shop/layout.tsx` so it also sits above `/shop/[collection]`. |             |
-| 2   | Products list | `products` | Browse, filter, sort, add to cart | Shopify Storefront via `getProducts` / `getCollectionProducts`. Reuse `Collections` (sidebar), `FilterList` (sort), `Grid` + `ProductGridItems`.                              |             |
+| #   | Section       | `id`       | Purpose                           | Content / data                                                                                                                                                                       | Inspiration |
+| --- | ------------- | ---------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| 1   | Hero          | `hero`     | Orient, then get out of the way   | **Page-local**, and the shortest on the site. Title + one line, no image or a thin banner. Static. Lives in `app/[lang]/shop/layout.tsx` so it also sits above `/shop/[collection]`. |             |
+| 2   | Products list | `products` | Browse, filter, sort, add to cart | Shopify Storefront via `getProducts` / `getCollectionProducts`. Reuse `Collections` (sidebar), `FilterList` (sort), `Grid` + `ProductGridItems`.                                     |             |
 
 Products section notes:
 
 - Collection filtering and sort already work via search params — keep that
   contract so links like `/shop?sort=price-asc` stay shareable.
 - Needs an **empty state** (no products in a collection) and a **loading state**
-  (reuse the pattern in [search/loading.tsx](app/search/loading.tsx)).
+  (reuse the pattern in [search/loading.tsx](app/[lang]/search/loading.tsx)).
 - On mobile the collection sidebar collapses above the grid — that behaviour is
   in the existing search layout; don't rebuild it.
 
@@ -296,9 +355,13 @@ One decision is still open and changes the work:
 
 Per-page checklist as each one is built:
 
-- `export const metadata` with a real title and description (the template's
-  Vercel copy is still in `app/page.tsx`, and `app/search/page.tsx` is titled
-  "Search" — rename it with the route).
+- `generateMetadata` with a real title and description, both from the page's
+  `metadata.*` keys in the dictionaries (`metadata.shop` already exists for
+  `/search`; move it with the route). Add `alternates.languages` for both
+  locales, as the home page does.
+- Every string in both dictionaries, every link through `localizePath`. Check
+  the page at `/en/…` and `/fr/…` before calling it done: French runs about
+  20% longer, so test headings and buttons at the narrowest breakpoint.
 - Sections in the order above, each with its `id`.
 - Tokens from [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) only — semantic names
   (`bg-surface`, `text-ink`, `text-on-accent`), no `dark:` variants, no raw hex.

@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "home": {
+      "description": "Gourmandique prépare ses pâtisseries en petites fournées et conçoit avec vous votre gâteau de mariage. Commandez en ligne pour la cueillette ou la livraison."
+    },
+    "shop": {
+      "title": "Boutique",
+      "description": "Découvrez les pâtisseries et les gâteaux de Gourmandique."
+    }
+  },
+  "languageSwitcher": {
+    "label": "Langue",
+    "en": "English",
+    "fr": "Français"
+  },
+  "header": {
+    "home": "Gourmandique, accueil",
+    "menu": "Menu",
+    "close": "Fermer",
+    "shop": "Boutique",
+    "cart": "Panier"
+  },
+  "nav": {
+    "links": {
+      "home": "Accueil",
+      "shop": "Boutique",
+      "wedding": "Mariage",
+      "about": "À propos",
+      "contact": "Contact"
+    },
+    "images": {
+      "home": "Un gâteau de mariage",
+      "shop": "Des pâtisseries",
+      "wedding": "Un gâteau de mariage",
+      "about": "Meriem, la fondatrice",
+      "contact": "Le logo de Gourmandique"
+    },
+    "credits": {
+      "madeBy": "Conception :",
+      "typography": "Typographie :",
+      "images": "Images :",
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions générales"
+    }
+  },
+  "footer": {
+    "label": "Pied de page"
+  },
+  "home": {
+    "hero": {
+      "title": "Des pâtisseries pour vos envies de tous les jours.",
+      "titleEmphasis": "Des gâteaux de mariage pour votre grand jour.",
+      "body": "Des tartes et des petits gâteaux faits maison, et des gâteaux de mariage uniques conçus pour votre occasion spéciale.",
+      "primaryCta": "Pâtisseries",
+      "secondaryCta": "Gâteaux de mariage",
+      "images": [
+        "Un plateau de pâtisseries fraîches",
+        "Un assortiment de tartes et de petits gâteaux",
+        "Un gâteau de mariage blanc à trois étages orné de roses, de gerberas et de gypsophile",
+        "Un gâteau de mariage sur son présentoir"
+      ],
+      "labels": [
+        { "eyebrow": "Pâtisserie", "title": "Préparées en petites fournées" },
+        { "eyebrow": "Gâteaux de mariage", "title": "Conçus avec vous" }
+      ]
+    },
+    "gallery": {
+      "title": "Galerie d'images flottantes",
+      "subtitle": "Next.js et GSAP"
+    },
+    "stats": {
+      "eyebrow": "En chiffres",
+      "title": "De petites fournées qui s'additionnent",
+      "items": [
+        {
+          "value": 2400,
+          "suffix": "+",
+          "label": "Gâteaux et boîtes de pâtisseries préparés"
+        },
+        { "value": 180, "suffix": "+", "label": "Mariages servis" },
+        { "value": 12, "label": "Années de pâtisserie" }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "title": "Avant de commander",
+      "items": [
+        {
+          "q": "Combien de temps à l'avance dois-je commander?",
+          "a": "Prévoyez 48 heures pour les pâtisseries et deux semaines pour un gâteau de fête personnalisé. Il est préférable de réserver un gâteau de mariage de trois à six mois à l'avance, car nous en acceptons un nombre limité chaque fin de semaine."
+        },
+        {
+          "q": "Faites-vous la livraison?",
+          "a": "Oui, dans notre zone de livraison locale; les frais sont indiqués au moment de payer. Vous pouvez aussi récupérer votre commande gratuitement à notre cuisine; nous vous envoyons les détails de la cueillette une fois votre commande confirmée."
+        },
+        {
+          "q": "Pouvez-vous tenir compte des allergies?",
+          "a": "Nous offrons des options sans gluten et sans produits laitiers pour plusieurs de nos gâteaux. Notre cuisine manipule des noix, du gluten, des produits laitiers et des œufs; nous ne pouvons donc pas garantir qu'un produit en soit exempt de traces."
+        },
+        {
+          "q": "Puis-je commander un design personnalisé?",
+          "a": "Absolument. Parlez-nous de l'occasion, du nombre d'invités et de vos inspirations : nous dessinerons un design et vous en donnerons le prix avant de commencer quoi que ce soit."
+        },
+        {
+          "q": "Comment conserver mes pâtisseries?",
+          "a": "La plupart des pâtisseries sont meilleures le jour même. Gardez les gâteaux et les pièces à la crème au réfrigérateur, et sortez-les environ 30 minutes avant de servir pour que les saveurs ressortent."
+        }
+      ]
+    },
+    "cta": {
+      "title": [
+        "Une douceur pour aujourd'hui,",
+        "ou le gâteau de votre grand jour"
+      ],
+      "body": [
+        "Commandez des pâtisseries préparées en petites fournées,",
+        "ou commencez à planifier un gâteau de mariage conçu avec vous."
+      ],
+      "primary": "Pâtisseries",
+      "secondary": "Gâteau de mariage"
+    }
+  },
+  "shop": {
+    "collections": "Collections",
+    "all": "Tout",
+    "sortBy": "Trier par",
+    "sort": {
+      "relevance": "Pertinence",
+      "trending-desc": "Populaires",
+      "latest-desc": "Nouveautés",
+      "price-asc": "Prix : croissant",
+      "price-desc": "Prix : décroissant"
+    },
+    "noResults": "Aucun produit ne correspond à",
+    "resultsOne": "{count} résultat pour",
+    "resultsMany": "{count} résultats pour",
+    "emptyCollection": "Aucun produit dans cette collection",
+    "collectionProducts": "Produits : {title}"
+  },
+  "product": {
+    "related": "Produits similaires",
+    "addToCart": "Ajouter au panier",
+    "outOfStock": "Épuisé",
+    "selectOption": "Veuillez choisir une option"
+  },
+  "page": {
+    "lastUpdated": "Ce document a été mis à jour le {date}."
+  },
+  "error": {
+    "title": "Oh non!",
+    "body": "Un problème est survenu avec notre boutique. Il peut s'agir d'un problème temporaire; veuillez réessayer.",
+    "retry": "Réessayer"
+  }
+}

@@ -4,6 +4,8 @@ import {
   WORDMARK_SECONDS,
 } from "components/gourmandique-wordmark";
 import { CurtainGate } from "components/home/curtain-gate";
+import type { Dictionary } from "dictionaries";
+import { localizePath, type Locale } from "lib/i18n";
 import Image from "next/image";
 
 // The hero opens as a curtain: on mount it covers the whole page, fixed and
@@ -44,26 +46,27 @@ const CSS = `
   #${CURTAIN_ID}{animation:hero-fade ${REDUCED_FADE_SECONDS}s ease-out ${REDUCED_HOLD_SECONDS}s both}
 }`;
 
-type Tile =
-  | { kind: "image"; src: string; alt: string }
-  | { kind: "label"; eyebrow: string; title: string };
-
 const PLACEHOLDER = "/images/mimiWeddingCake.jpg";
 
-const TILES: Tile[] = [
-  { kind: "image", src: PLACEHOLDER, alt: "A tray of fresh pastries" },
-  { kind: "label", eyebrow: "Pâtisserie", title: "Baked in small batches" },
-  { kind: "image", src: PLACEHOLDER, alt: "Assorted tarts and petits gâteaux" },
-  {
-    kind: "image",
-    src: PLACEHOLDER,
-    alt: "A three-tier white wedding cake dressed with roses, gerberas and baby's breath",
-  },
-  { kind: "label", eyebrow: "Wedding cakes", title: "Designed with you" },
-  { kind: "image", src: PLACEHOLDER, alt: "A wedding cake on its stand" },
-];
+// The grid, in reading order: photos and text tiles alternate in a 2×3 grid.
+// `image` and `label` index into the dictionary's `images` (alt text) and
+// `labels` (eyebrow + title) lists.
+const TILES = [
+  { kind: "image", src: PLACEHOLDER, image: 0 },
+  { kind: "label", label: 0 },
+  { kind: "image", src: PLACEHOLDER, image: 1 },
+  { kind: "image", src: PLACEHOLDER, image: 2 },
+  { kind: "label", label: 1 },
+  { kind: "image", src: PLACEHOLDER, image: 3 },
+] as const;
 
-export function HomeHero() {
+export function HomeHero({
+  lang,
+  copy,
+}: {
+  lang: Locale;
+  copy: Dictionary["home"]["hero"];
+}) {
   return (
     <section
       id="hero"
@@ -76,16 +79,20 @@ export function HomeHero() {
         <div className="grid h-full overflow-hidden lg:grid-cols-2">
           <div className="flex flex-col justify-center gap-8 px-6 py-14 md:px-12 lg:px-14">
             <h1 id="hero-title" className="font-display text-h1 text-ink">
-              Pastries for every day cravings.{" "}
-              <em className="text-accent">Wedding Cakes for your big day.</em>
+              {copy.title} <em className="text-accent">{copy.titleEmphasis}</em>
             </h1>
-            <p className="max-w-md text-lg text-ink-muted">
-              Homemade tarts and petits gâteaux, and unique wedding cakes
-              designed for your special occasion.
-            </p>
+            <p className="max-w-md text-lg text-ink-muted">{copy.body}</p>
             <div className="flex flex-wrap gap-3">
-              <Button href="/shop" style="primary" text="Pastries" />
-              <Button href="/wedding" style="secondary" text="Wedding Cakes" />
+              <Button
+                href={localizePath(lang, "/shop")}
+                style="primary"
+                text={copy.primaryCta}
+              />
+              <Button
+                href={localizePath(lang, "/wedding")}
+                style="secondary"
+                text={copy.secondaryCta}
+              />
             </div>
           </div>
 
@@ -98,7 +105,7 @@ export function HomeHero() {
                 >
                   <Image
                     src={tile.src}
-                    alt={tile.alt}
+                    alt={copy.images[tile.image] ?? ""}
                     fill
                     sizes="(min-width: 1280px) 320px, (min-width: 1024px) 25vw, 50vw"
                     priority={i < 2}
@@ -111,10 +118,10 @@ export function HomeHero() {
                   className="flex aspect-square flex-col items-center justify-center gap-2 bg-surface p-4 text-center lg:aspect-auto"
                 >
                   <p className="text-eyebrow text-ink-subtle uppercase">
-                    {tile.eyebrow}
+                    {copy.labels[tile.label]?.eyebrow}
                   </p>
                   <p className="font-display text-h3 text-ink italic">
-                    {tile.title}
+                    {copy.labels[tile.label]?.title}
                   </p>
                 </div>
               ),
