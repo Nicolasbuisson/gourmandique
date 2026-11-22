@@ -1,5 +1,7 @@
 "use client";
 
+import { intlLocale } from "lib/i18n";
+import { useLocale } from "lib/use-locale";
 import { animate, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -29,8 +31,6 @@ type StatsProps = {
   eyebrow: string;
   title: string;
   items: StatItem[];
-  // BCP 47 tag for number formatting: "2,400" in en-CA, "2 400" in fr-CA.
-  locale?: string;
 };
 
 const DURATION = 1.4;
@@ -38,13 +38,9 @@ const DURATION = 1.4;
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 const OFFSET_Y = 60;
 
-export function Stats({
-  id = "stats",
-  eyebrow,
-  title,
-  items,
-  locale = "en-CA",
-}: StatsProps) {
+export function Stats({ id = "stats", eyebrow, title, items }: StatsProps) {
+  // Numbers follow the page's locale: "2,400" in en-CA, "2 400" in fr-CA.
+  const locale = intlLocale[useLocale()];
   const titleId = `${id}-title`;
 
   return (

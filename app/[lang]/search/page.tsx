@@ -2,24 +2,20 @@ import Grid from "components/grid";
 import ProductGridItems from "components/layout/product-grid-items";
 import { format, getDictionary } from "dictionaries";
 import { defaultSort, sorting } from "lib/constants";
-import { asLocale } from "lib/i18n";
 import { getProducts } from "lib/shopify";
 import type { Metadata } from "next";
 
 type Props = {
-  params: Promise<{ lang: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export async function generateMetadata(props: Props): Promise<Metadata> {
-  const lang = asLocale((await props.params).lang);
-  const { metadata } = await getDictionary(lang);
+export async function generateMetadata(): Promise<Metadata> {
+  const { metadata } = await getDictionary();
   return metadata.shop;
 }
 
 export default async function SearchPage(props: Props) {
-  const lang = asLocale((await props.params).lang);
-  const { shop } = await getDictionary(lang);
+  const { shop } = await getDictionary();
   const searchParams = await props.searchParams;
   const { sort, q: searchValue } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
@@ -42,7 +38,7 @@ export default async function SearchPage(props: Props) {
       ) : null}
       {products.length > 0 ? (
         <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <ProductGridItems lang={lang} products={products} />
+          <ProductGridItems products={products} />
         </Grid>
       ) : null}
     </>

@@ -1,16 +1,16 @@
 import Grid from "components/grid";
 import { GridTileImage } from "components/grid/tile";
-import { localizePath, type Locale } from "lib/i18n";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 import { Product } from "lib/shopify/types";
 import Link from "next/link";
 
-export default function ProductGridItems({
-  lang,
+export default async function ProductGridItems({
   products,
 }: {
-  lang: Locale;
   products: Product[];
 }) {
+  const lang = await getLocale();
   return (
     <>
       {products.map((product) => (

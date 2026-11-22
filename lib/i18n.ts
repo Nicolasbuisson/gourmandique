@@ -22,8 +22,8 @@ export function isLocale(value: string | undefined): value is Locale {
   return locales.includes(value as Locale);
 }
 
-// Narrows a `[lang]` route param. The root layout already 404s any other
-// value, so below it this only satisfies the type checker.
+// Narrows a `[lang]` value to a Locale. The root layout already 404s any
+// other value, so below it this only satisfies the type checker.
 export function asLocale(value: string): Locale {
   return isLocale(value) ? value : defaultLocale;
 }

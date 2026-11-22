@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 
 import Prose from "components/prose";
 import { format, getDictionary } from "dictionaries";
-import { asLocale, intlLocale } from "lib/i18n";
+import { getLocale } from "lib/get-locale";
+import { intlLocale } from "lib/i18n";
 import { getPage } from "lib/shopify";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: {
-  params: Promise<{ lang: string; page: string }>;
+  params: Promise<{ page: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
   const page = await getPage(params.page);
@@ -26,10 +27,11 @@ export async function generateMetadata(props: {
 }
 
 export default async function Page(props: {
-  params: Promise<{ lang: string; page: string }>;
+  params: Promise<{ page: string }>;
 }) {
   const params = await props.params;
-  const dict = await getDictionary(asLocale(params.lang));
+  const dict = await getDictionary();
+  const lang = await getLocale();
   const page = await getPage(params.page);
 
   if (!page) return notFound();
@@ -40,7 +42,7 @@ export default async function Page(props: {
       <Prose className="mb-8" html={page.body} />
       <p className="text-sm italic">
         {format(dict.page.lastUpdated, {
-          date: new Intl.DateTimeFormat(intlLocale[asLocale(params.lang)], {
+          date: new Intl.DateTimeFormat(intlLocale[lang], {
             year: "numeric",
             month: "long",
             day: "numeric",

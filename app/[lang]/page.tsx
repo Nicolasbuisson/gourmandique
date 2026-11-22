@@ -7,15 +7,14 @@ import { CtaBanner } from "components/sections/cta-banner";
 import { Faq } from "components/sections/faq";
 import { Stats } from "components/sections/stats";
 import { getDictionary } from "dictionaries";
-import { asLocale, intlLocale, localizePath, locales } from "lib/i18n";
+import { getLocale } from "lib/get-locale";
+import { intlLocale, localizePath, locales } from "lib/i18n";
 import type { Metadata } from "next";
 import { Fragment, type ReactNode } from "react";
 
-type Props = { params: Promise<{ lang: string }> };
-
-export async function generateMetadata(props: Props): Promise<Metadata> {
-  const lang = asLocale((await props.params).lang);
-  const dict = await getDictionary(lang);
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLocale();
+  const dict = await getDictionary();
 
   return {
     description: dict.metadata.home.description,
@@ -42,35 +41,29 @@ const lines = (parts: string[]): ReactNode =>
     </Fragment>
   ));
 
-export default async function HomePage(props: Props) {
-  const lang = asLocale((await props.params).lang);
-  const dict = await getDictionary(lang);
-  const { hero, stats, faq, cta } = dict.home;
+export default async function HomePage() {
+  const lang = await getLocale();
+  const dict = await getDictionary();
+  const { stats, faq, cta } = dict.home;
 
   return (
     <>
       {/* <Navbar /> */}
       <Header
-        lang={lang}
         labels={dict.header}
         nav={dict.nav}
         languageLabels={dict.languageSwitcher}
       />
-      <HomeHero lang={lang} copy={hero} />
-      <ThreeItemGrid lang={lang} />
+      <HomeHero />
+      <ThreeItemGrid />
       {/* Placeholder copy from the gallery tutorial. */}
       <FloatingGallery
         title={dict.home.gallery.title}
         subtitle={dict.home.gallery.subtitle}
       />
-      <Carousel lang={lang} />
+      <Carousel />
       {/* Mock figures until the real ones are in. */}
-      <Stats
-        eyebrow={stats.eyebrow}
-        title={stats.title}
-        items={stats.items}
-        locale={intlLocale[lang]}
-      />
+      <Stats eyebrow={stats.eyebrow} title={stats.title} items={stats.items} />
       {/* Mock questions until the real copy is in. */}
       <Faq eyebrow={faq.eyebrow} title={faq.title} items={faq.items} />
       <CtaBanner

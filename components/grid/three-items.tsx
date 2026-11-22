@@ -1,16 +1,17 @@
 import { GridTileImage } from "components/grid/tile";
-import { localizePath, type Locale } from "lib/i18n";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 import { getCollectionProducts } from "lib/shopify";
 import type { Product } from "lib/shopify/types";
 import Link from "next/link";
 
 function ThreeItemGridItem({
-  lang,
+  href,
   item,
   size,
   priority,
 }: {
-  lang: Locale;
+  href: string;
   item: Product;
   size: "full" | "half";
   priority?: boolean;
@@ -25,7 +26,7 @@ function ThreeItemGridItem({
     >
       <Link
         className="relative block aspect-square h-full w-full"
-        href={localizePath(lang, `/product/${item.handle}`)}
+        href={href}
         prefetch={true}
       >
         <GridTileImage
@@ -50,7 +51,10 @@ function ThreeItemGridItem({
   );
 }
 
-export async function ThreeItemGrid({ lang }: { lang: Locale }) {
+export async function ThreeItemGrid() {
+  const lang = await getLocale();
+  const href = (item: Product) => localizePath(lang, `/product/${item.handle}`);
+
   // Collections that start with `hidden-*` are hidden from the search page.
   const homepageItems = await getCollectionProducts({
     collection: "hidden-homepage-featured-items",
@@ -63,18 +67,22 @@ export async function ThreeItemGrid({ lang }: { lang: Locale }) {
   return (
     <section className="mx-auto grid max-w-(--breakpoint-2xl) gap-4 px-4 pb-4 md:grid-cols-6 md:grid-rows-2 lg:max-h-[calc(100vh-200px)]">
       <ThreeItemGridItem
-        lang={lang}
+        href={href(firstProduct)}
         size="full"
         item={firstProduct}
         priority={true}
       />
       <ThreeItemGridItem
-        lang={lang}
+        href={href(secondProduct)}
         size="half"
         item={secondProduct}
         priority={true}
       />
-      <ThreeItemGridItem lang={lang} size="half" item={thirdProduct} />
+      <ThreeItemGridItem
+        href={href(thirdProduct)}
+        size="half"
+        item={thirdProduct}
+      />
     </section>
   );
 }

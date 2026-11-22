@@ -1,3 +1,4 @@
+import { getLocale } from "lib/get-locale";
 import type { Locale } from "lib/i18n";
 import type en from "./en.json";
 
@@ -5,8 +6,10 @@ import type en from "./en.json";
 // `satisfies` makes the build fail if `fr.json` is missing a key or has one
 // of the wrong type.
 //
-// Load it in server components (pages, layouts) and pass the strings down as
-// props. Each locale is a separate chunk, so a page only ships its own.
+// Call `getDictionary()` in any server component: it reads the locale from
+// the URL itself (`next/root-params`), so nothing needs `lang` passed in.
+// Client components get their strings as props from the nearest server
+// component. Each locale is a separate chunk, so a page only ships its own.
 
 export type Dictionary = typeof en;
 
@@ -15,8 +18,9 @@ const dictionaries = {
   fr: () => import("./fr.json").then((m) => m.default satisfies Dictionary),
 } satisfies Record<Locale, () => Promise<Dictionary>>;
 
-export const getDictionary = (lang: Locale): Promise<Dictionary> =>
-  dictionaries[lang]();
+export async function getDictionary(): Promise<Dictionary> {
+  return dictionaries[await getLocale()]();
+}
 
 // Fills `{name}` placeholders: format("Showing {count} results", { count: 3 }).
 export function format(

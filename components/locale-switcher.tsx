@@ -1,7 +1,8 @@
 "use client";
 
 import type { Dictionary } from "dictionaries";
-import { locales, switchLocalePath, type Locale } from "lib/i18n";
+import { locales, switchLocalePath } from "lib/i18n";
+import { useLocale } from "lib/use-locale";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -13,14 +14,13 @@ import { usePathname } from "next/navigation";
 // sends the visitor back to it next time.
 
 export function LocaleSwitcher({
-  lang,
   labels,
   className,
 }: {
-  lang: Locale;
   labels: Dictionary["languageSwitcher"];
   className?: string;
 }) {
+  const lang = useLocale();
   const pathname = usePathname();
 
   return (

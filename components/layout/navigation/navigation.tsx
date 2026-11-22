@@ -1,6 +1,7 @@
 "use client";
 import type { Dictionary } from "dictionaries";
-import { localizePath, type Locale } from "lib/i18n";
+import { localizePath } from "lib/i18n";
+import { useLocale } from "lib/use-locale";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { height } from "./anim";
@@ -18,13 +19,8 @@ const LINKS = [
   { key: "contact", href: "/contact", src: "gourmandiqueLogo.jpg" },
 ] as const;
 
-export const Nav = ({
-  lang,
-  labels,
-}: {
-  lang: Locale;
-  labels: Dictionary["nav"];
-}) => {
+export const Nav = ({ labels }: { labels: Dictionary["nav"] }) => {
+  const lang = useLocale();
   const links = LINKS.map(({ key, href, src }) => ({
     title: labels.links[key],
     alt: labels.images[key],

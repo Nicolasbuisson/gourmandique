@@ -1,8 +1,9 @@
 import { FlipLink } from "components/fliplink/flipLink";
 import { GourmandiqueWordmarkStatic } from "components/gourmandique-wordmark";
 import { LocaleSwitcher } from "components/locale-switcher";
-import type { Dictionary } from "dictionaries";
-import { localizePath, type Locale } from "lib/i18n";
+import { getDictionary } from "dictionaries";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 
 const PATHS = {
   home: "/",
@@ -22,23 +23,17 @@ const PATHS = {
 // clip-path, not overflow-hidden: overflow on an ancestor turns off sticky.
 // Sticky, not fixed: a fixed footer is always inside the window, so tabbing to
 // a link would focus it unseen instead of scrolling to it.
-export default function Footer({
-  lang,
-  links,
-  label,
-  languageLabel,
-}: {
-  lang: Locale;
-  links: Dictionary["nav"]["links"];
-  label: string;
-  languageLabel: Dictionary["languageSwitcher"];
-}) {
+export default async function Footer() {
+  const lang = await getLocale();
+  const dict = await getDictionary();
+  const links = dict.nav.links;
+
   return (
     <div className="relative h-(--footer-h) [clip-path:inset(0)]">
       <div className="relative -top-[100svh] h-[calc(100svh+var(--footer-h))]">
         <footer className="sticky top-[calc(100svh-var(--footer-h))] flex h-(--footer-h) flex-col overflow-hidden text-sm text-ink-muted">
           <nav
-            aria-label={label}
+            aria-label={dict.footer.label}
             className="mx-auto w-full max-w-7xl shrink-0 px-6 py-12"
           >
             <ul className="flex flex-wrap gap-x-8 gap-y-3">
@@ -60,7 +55,7 @@ export default function Footer({
           </div>
           <div className="mx-auto flex w-full max-w-7xl shrink-0 items-center justify-between gap-6 px-6 pt-6 pb-6">
             <p>&copy;2026</p>
-            <LocaleSwitcher lang={lang} labels={languageLabel} />
+            <LocaleSwitcher labels={dict.languageSwitcher} />
           </div>
         </footer>
       </div>

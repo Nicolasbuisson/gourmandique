@@ -2,7 +2,8 @@
 import clsx from "clsx";
 import { LocaleSwitcher } from "components/locale-switcher";
 import type { Dictionary } from "dictionaries";
-import { localizePath, type Locale } from "lib/i18n";
+import { localizePath } from "lib/i18n";
+import { useLocale } from "lib/use-locale";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -10,16 +11,15 @@ import { background, opacity } from "./anim";
 import { Nav } from "./navigation";
 
 export const Header = ({
-  lang,
   labels,
   nav,
   languageLabels,
 }: {
-  lang: Locale;
   labels: Dictionary["header"];
   nav: Dictionary["nav"];
   languageLabels: Dictionary["languageSwitcher"];
 }) => {
+  const lang = useLocale();
   const [isActive, setIsActive] = useState(false);
 
   return (
@@ -69,11 +69,7 @@ export const Header = ({
           animate={!isActive ? "open" : "closed"}
           className="absolute right-0 flex gap-7.5"
         >
-          <LocaleSwitcher
-            lang={lang}
-            labels={languageLabels}
-            className="hidden sm:block"
-          />
+          <LocaleSwitcher labels={languageLabels} className="hidden sm:block" />
           <Link href={localizePath(lang, "/shop")} className="hidden sm:block">
             {labels.shop}
           </Link>
@@ -104,7 +100,7 @@ export const Header = ({
         className="absolute top-full left-0 h-full w-full bg-soot/50"
       ></motion.div>
       <AnimatePresence mode="wait">
-        {isActive && <Nav lang={lang} labels={nav} />}
+        {isActive && <Nav labels={nav} />}
       </AnimatePresence>
     </div>
   );

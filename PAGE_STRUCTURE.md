@@ -148,11 +148,18 @@ dictionary per locale.
   [dictionaries/fr.json](dictionaries/fr.json) hold every user-facing string,
   grouped by where it appears (`header`, `nav`, `home.hero`, `home.faq`,
   `shop`, `product`, …). They are the only content files. `en.json` defines
-  the type; `fr.json` must match it or the build fails. Pages and layouts call
-  `getDictionary(lang)` and pass the strings down; client components get them
-  as props too. Copy that breaks onto lines (the CTA title) is an array of
+  the type; `fr.json` must match it or the build fails. Any server component
+  calls `getDictionary()` for its own strings; client components get theirs as
+  props from the nearest server component. Copy that breaks onto lines (the CTA title) is an array of
   lines, joined with `<br />` by the page. Placeholders use `{name}` and are
   filled with `format()` from `dictionaries/`.
+- **Reading the locale.** No component takes a `lang` prop. Server components
+  call `getLocale()` ([lib/get-locale.ts](lib/get-locale.ts)), which reads the
+  `[lang]` root segment through `next/root-params` (behind
+  `experimental.rootParams` in `next.config.ts`). Client components call
+  `useLocale()` ([lib/use-locale.ts](lib/use-locale.ts)), which reads it from
+  `useParams()`. `getLocale()` throws inside `"use cache"`, server actions and
+  route handlers; read it outside and pass it in as an argument there.
 - **Links.** [lib/i18n.ts](lib/i18n.ts) has `localizePath(lang, "/shop")` for
   every internal link, `switchLocalePath` for the language switcher, and
   `intlLocale` (`en-CA`, `fr-CA`) for `Intl` number and date formatting.
@@ -166,8 +173,9 @@ Not translated yet:
 - **Shopify content** — product titles, descriptions, collections and CMS pages
   come back in the store's default language. Translating them needs the
   Shopify Translate & Adapt app plus `@inContext(language: …)` on the
-  Storefront queries in `lib/shopify/`, with the locale passed through from the
-  page.
+  Storefront queries in `lib/shopify/`. Those functions are `"use cache"`, so
+  they take the locale as an argument (from `getLocale()` in the caller); that
+  also keys the cache per language.
 - **Unused template components** — `components/layout/navbar/` and the cart
   modal it opens still carry English strings. They aren't rendered; translate
   them if they come back, or delete them.

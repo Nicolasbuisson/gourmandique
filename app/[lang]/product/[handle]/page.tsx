@@ -3,7 +3,8 @@ import { Gallery } from "components/product/gallery";
 import { ProductDescription } from "components/product/product-description";
 import { getDictionary } from "dictionaries";
 import { HIDDEN_PRODUCT_TAG } from "lib/constants";
-import { asLocale, localizePath, type Locale } from "lib/i18n";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 import { getProduct, getProductRecommendations } from "lib/shopify";
 import type { Image } from "lib/shopify/types";
 import type { Metadata } from "next";
@@ -12,7 +13,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export async function generateMetadata(props: {
-  params: Promise<{ lang: string; handle: string }>;
+  params: Promise<{ handle: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
   const product = await getProduct(params.handle);
@@ -49,10 +50,10 @@ export async function generateMetadata(props: {
 }
 
 export default async function ProductPage(props: {
-  params: Promise<{ lang: string; handle: string }>;
+  params: Promise<{ handle: string }>;
 }) {
   const params = await props.params;
-  const { product: labels } = await getDictionary(asLocale(params.lang));
+  const { product: labels } = await getDictionary();
   const product = await getProduct(params.handle);
 
   if (!product) return notFound();
@@ -105,25 +106,14 @@ export default async function ProductPage(props: {
             </Suspense>
           </div>
         </div>
-        <RelatedProducts
-          lang={asLocale(params.lang)}
-          id={product.id}
-          title={labels.related}
-        />
+        <RelatedProducts id={product.id} title={labels.related} />
       </div>
     </>
   );
 }
 
-async function RelatedProducts({
-  lang,
-  id,
-  title,
-}: {
-  lang: Locale;
-  id: string;
-  title: string;
-}) {
+async function RelatedProducts({ id, title }: { id: string; title: string }) {
+  const lang = await getLocale();
   const relatedProducts = await getProductRecommendations(id);
 
   if (!relatedProducts.length) return null;

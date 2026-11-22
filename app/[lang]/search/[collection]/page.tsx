@@ -6,13 +6,12 @@ import Grid from "components/grid";
 import ProductGridItems from "components/layout/product-grid-items";
 import { format, getDictionary } from "dictionaries";
 import { defaultSort, sorting } from "lib/constants";
-import { asLocale } from "lib/i18n";
 
 export async function generateMetadata(props: {
-  params: Promise<{ lang: string; collection: string }>;
+  params: Promise<{ collection: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
-  const { shop } = await getDictionary(asLocale(params.lang));
+  const { shop } = await getDictionary();
   const collection = await getCollection(params.collection);
 
   if (!collection) return notFound();
@@ -27,12 +26,12 @@ export async function generateMetadata(props: {
 }
 
 export default async function CategoryPage(props: {
-  params: Promise<{ lang: string; collection: string }>;
+  params: Promise<{ collection: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
   const params = await props.params;
-  const { shop } = await getDictionary(asLocale(params.lang));
+  const { shop } = await getDictionary();
   const { sort } = searchParams as { [key: string]: string };
   const { sortKey, reverse } =
     sorting.find((item) => item.slug === sort) || defaultSort;
@@ -48,7 +47,7 @@ export default async function CategoryPage(props: {
         <p className="py-3 text-lg">{shop.emptyCollection}</p>
       ) : (
         <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <ProductGridItems lang={asLocale(params.lang)} products={products} />
+          <ProductGridItems products={products} />
         </Grid>
       )}
     </section>

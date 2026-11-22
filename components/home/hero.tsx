@@ -4,8 +4,9 @@ import {
   WORDMARK_SECONDS,
 } from "components/gourmandique-wordmark";
 import { CurtainGate } from "components/home/curtain-gate";
-import type { Dictionary } from "dictionaries";
-import { localizePath, type Locale } from "lib/i18n";
+import { getDictionary } from "dictionaries";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 import Image from "next/image";
 
 // The hero opens as a curtain: on mount it covers the whole page, fixed and
@@ -60,13 +61,10 @@ const TILES = [
   { kind: "image", src: PLACEHOLDER, image: 3 },
 ] as const;
 
-export function HomeHero({
-  lang,
-  copy,
-}: {
-  lang: Locale;
-  copy: Dictionary["home"]["hero"];
-}) {
+export async function HomeHero() {
+  const lang = await getLocale();
+  const copy = (await getDictionary()).home.hero;
+
   return (
     <section
       id="hero"

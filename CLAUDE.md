@@ -27,7 +27,9 @@ Tokens themselves live in the `@theme` block in
 The site is bilingual, English and French. Every page lives under
 `app/[lang]/` (`/en/…`, `/fr/…`); [proxy.ts](proxy.ts) redirects unprefixed
 URLs, and [lib/i18n.ts](lib/i18n.ts) holds the locale list and the link
-helpers. The "Languages" section of PAGE_STRUCTURE.md has the details.
+helpers. The locale is read where it's needed, never passed down as a prop:
+`getLocale()` in server components (via `next/root-params`), `useLocale()` in
+client components. The "Languages" section of PAGE_STRUCTURE.md has the details.
 
 ## Rules that are easy to get wrong
 
@@ -45,14 +47,19 @@ helpers. The "Languages" section of PAGE_STRUCTURE.md has the details.
   and [dictionaries/fr.json](dictionaries/fr.json), one key per string, the same
   keys in both. They are the only content files: don't add others (no
   `lib/content/`, no per-page copy modules) and don't hardcode user-facing
-  text, alt text or `aria-label`s in components. A page or layout loads its
-  locale with `getDictionary(lang)` from `dictionaries/` and passes the
-  strings down as props; components never import the JSON themselves (the
-  error boundary is the one exception, as a client component that can't).
+  text, alt text or `aria-label`s in components. Server components call
+  `getDictionary()` from `dictionaries/` (no argument: it reads the locale
+  itself). Client components can't, so the nearest server component passes
+  them their strings as props. Nothing imports the JSON directly; the error
+  boundary is the one exception, as a client component with no server parent.
   Add every new key to both files in the same change; `en.json` defines the
   shape, and a key missing from `fr.json` fails the build.
 - Internal links go through `localizePath(lang, "/shop")` so they keep the
-  visitor's language. Never write a bare `href="/shop"`.
+  visitor's language. Never write a bare `href="/shop"`. Get `lang` from
+  `getLocale()` or `useLocale()`; don't add a `lang` prop.
+- `getLocale()` and `getDictionary()` don't work inside `"use cache"`, server
+  actions or route handlers. Read the locale outside and pass it in as an
+  argument there (the Shopify functions in `lib/shopify/` are cached).
 
 ## Commands
 

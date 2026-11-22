@@ -1,12 +1,12 @@
 import { CartProvider } from "components/cart/cart-context";
 import Footer from "components/layout/footer";
 import { WelcomeToast } from "components/welcome-toast";
-import { getDictionary } from "dictionaries";
 import { intlLocale, isLocale, locales } from "lib/i18n";
 import { getCart } from "lib/shopify";
 import { baseUrl } from "lib/utils";
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
+import { lang as rootLang } from "next/root-params";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { fontVariables } from "../fonts";
@@ -26,15 +26,15 @@ export const viewport: Viewport = {
 
 // This is the root layout: every page sits under `/[lang]` (see
 // proxy.ts), so `<html lang>` can be set from the URL. Both locales are
-// prerendered; any other first segment is a 404.
+// prerendered; any other first segment is a 404. Because `[lang]` is the
+// root segment, any server component below can read it with `getLocale()`
+// or `getDictionary()` instead of having it passed down.
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
 
-export async function generateMetadata(props: {
-  params: Promise<{ lang: string }>;
-}): Promise<Metadata> {
-  const { lang } = await props.params;
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await rootLang();
   if (!isLocale(lang)) return {};
 
   return {
@@ -53,15 +53,14 @@ export async function generateMetadata(props: {
   };
 }
 
-export default async function RootLayout(props: {
+export default async function RootLayout({
+  children,
+}: {
   children: ReactNode;
-  params: Promise<{ lang: string }>;
 }) {
-  const { children } = props;
-  const { lang } = await props.params;
+  // Read raw rather than through getLocale(), which falls back to the default.
+  const lang = await rootLang();
   if (!isLocale(lang)) notFound();
-
-  const dict = await getDictionary(lang);
 
   // Don't await the fetch, pass the Promise to the context provider
   const cart = getCart();
@@ -76,12 +75,7 @@ export default async function RootLayout(props: {
             <WelcomeToast />
           </main>
         </CartProvider>
-        <Footer
-          lang={lang}
-          links={dict.nav.links}
-          label={dict.footer.label}
-          languageLabel={dict.languageSwitcher}
-        />
+        <Footer />
       </body>
     </html>
   );

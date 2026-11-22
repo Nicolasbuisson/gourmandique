@@ -2,16 +2,14 @@
 
 import en from "dictionaries/en.json";
 import fr from "dictionaries/fr.json";
-import { defaultLocale, isLocale } from "lib/i18n";
-import { useParams } from "next/navigation";
+import { useLocale } from "lib/use-locale";
 
 // Error boundaries are client components and can't load the dictionary
 // themselves, so this one imports just the `error` copy for both locales.
 const COPY = { en: en.error, fr: fr.error };
 
 export default function Error({ reset }: { reset: () => void }) {
-  const { lang } = useParams<{ lang: string }>();
-  const copy = COPY[isLocale(lang) ? lang : defaultLocale];
+  const copy = COPY[useLocale()];
 
   return (
     <div className="mx-auto my-4 flex max-w-xl flex-col rounded-lg border border-neutral-200 bg-white p-8 md:p-12">

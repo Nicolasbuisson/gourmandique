@@ -1,9 +1,11 @@
-import { localizePath, type Locale } from "lib/i18n";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 import { getCollectionProducts } from "lib/shopify";
 import Link from "next/link";
 import { GridTileImage } from "./grid/tile";
 
-export async function Carousel({ lang }: { lang: Locale }) {
+export async function Carousel() {
+  const lang = await getLocale();
   // Collections that start with `hidden-*` are hidden from the search page.
   const products = await getCollectionProducts({
     collection: "hidden-homepage-carousel",
