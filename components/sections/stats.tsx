@@ -1,5 +1,7 @@
 "use client";
 
+import { intlLocale } from "lib/i18n";
+import { useLocale } from "lib/use-locale";
 import { animate, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -36,9 +38,9 @@ const DURATION = 1.4;
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 const OFFSET_Y = 60;
 
-const format = (n: number) => Math.round(n).toLocaleString("en-US");
-
 export function Stats({ id = "stats", eyebrow, title, items }: StatsProps) {
+  // Numbers follow the page's locale: "2,400" in en-CA, "2 400" in fr-CA.
+  const locale = intlLocale[useLocale()];
   const titleId = `${id}-title`;
 
   return (
@@ -58,7 +60,7 @@ export function Stats({ id = "stats", eyebrow, title, items }: StatsProps) {
 
         <ul className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] md:mt-16">
           {items.map((item) => (
-            <StatCard key={item.label} item={item} />
+            <StatCard key={item.label} item={item} locale={locale} />
           ))}
         </ul>
       </div>
@@ -66,7 +68,8 @@ export function Stats({ id = "stats", eyebrow, title, items }: StatsProps) {
   );
 }
 
-function StatCard({ item }: { item: StatItem }) {
+function StatCard({ item, locale }: { item: StatItem; locale: string }) {
+  const format = (n: number) => Math.round(n).toLocaleString(locale);
   const ref = useRef<HTMLLIElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.5 });
   const reduceMotion = useReducedMotion();

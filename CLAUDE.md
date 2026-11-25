@@ -13,7 +13,7 @@ source of truth; don't re-derive their decisions from the code.
 - **[PAGE_STRUCTURE.md](PAGE_STRUCTURE.md)** says what each page **is**: the
   route map, the sections on every page in order with their `id`s, the
   section anatomy (container, vertical rhythm), the shared section components
-  in `components/sections/`, where content lives (`lib/content/`), and the
+  in `components/sections/`, how copy reaches them (the dictionaries), and the
   pending `/search` → `/shop` rename. Read it when adding or changing a page,
   route, or section.
 - **[DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)** says what things **look like**:
@@ -23,6 +23,13 @@ source of truth; don't re-derive their decisions from the code.
 
 Tokens themselves live in the `@theme` block in
 [app/globals.css](app/globals.css); fonts in [app/fonts.ts](app/fonts.ts).
+
+The site is bilingual, English and French. Every page lives under
+`app/[lang]/` (`/en/…`, `/fr/…`); [proxy.ts](proxy.ts) redirects unprefixed
+URLs, and [lib/i18n.ts](lib/i18n.ts) holds the locale list and the link
+helpers. The locale is read where it's needed, never passed down as a prop:
+`getLocale()` in server components (via `next/root-params`), `useLocale()` in
+client components. The "Languages" section of PAGE_STRUCTURE.md has the details.
 
 ## Rules that are easy to get wrong
 
@@ -36,9 +43,23 @@ Tokens themselves live in the `@theme` block in
 - The footer is rendered once, in the root layout, so don't import it into
   pages. It is revealed from under the page at a set height (`--footer-h`);
   sections above it need no special styling for that.
-- When adding the website copy, pass the copy in directly as props. Do not create
-  additional files whose only purpose is to store the content so that it can imported
-  into other files.
+- **All copy lives in the dictionaries**: [dictionaries/en.json](dictionaries/en.json)
+  and [dictionaries/fr.json](dictionaries/fr.json), one key per string, the same
+  keys in both. They are the only content files: don't add others (no
+  `lib/content/`, no per-page copy modules) and don't hardcode user-facing
+  text, alt text or `aria-label`s in components. Server components call
+  `getDictionary()` from `dictionaries/` (no argument: it reads the locale
+  itself). Client components can't, so the nearest server component passes
+  them their strings as props. Nothing imports the JSON directly; the error
+  boundary is the one exception, as a client component with no server parent.
+  Add every new key to both files in the same change; `en.json` defines the
+  shape, and a key missing from `fr.json` fails the build.
+- Internal links go through `localizePath(lang, "/shop")` so they keep the
+  visitor's language. Never write a bare `href="/shop"`. Get `lang` from
+  `getLocale()` or `useLocale()`; don't add a `lang` prop.
+- `getLocale()` and `getDictionary()` don't work inside `"use cache"`, server
+  actions or route handlers. Read the locale outside and pass it in as an
+  argument there (the Shopify functions in `lib/shopify/` are cached).
 
 ## Commands
 

@@ -6,14 +6,19 @@ import { addItem } from "components/cart/actions";
 import { Product, ProductVariant } from "lib/shopify/types";
 import { useSearchParams } from "next/navigation";
 import { useActionState } from "react";
+import type { Dictionary } from "dictionaries";
 import { useCart } from "./cart-context";
+
+type Labels = Dictionary["product"];
 
 function SubmitButton({
   availableForSale,
   selectedVariantId,
+  labels,
 }: {
   availableForSale: boolean;
   selectedVariantId: string | undefined;
+  labels: Labels;
 }) {
   const buttonClasses =
     "relative flex w-full items-center justify-center rounded-full bg-accent p-4 tracking-wide text-on-accent";
@@ -22,7 +27,7 @@ function SubmitButton({
   if (!availableForSale) {
     return (
       <button disabled className={clsx(buttonClasses, disabledClasses)}>
-        Out Of Stock
+        {labels.outOfStock}
       </button>
     );
   }
@@ -30,21 +35,21 @@ function SubmitButton({
   if (!selectedVariantId) {
     return (
       <button
-        aria-label="Please select an option"
+        aria-label={labels.selectOption}
         disabled
         className={clsx(buttonClasses, disabledClasses)}
       >
         <div className="absolute left-0 ml-4">
           <PlusIcon className="h-5" />
         </div>
-        Add To Cart
+        {labels.addToCart}
       </button>
     );
   }
 
   return (
     <button
-      aria-label="Add to cart"
+      aria-label={labels.addToCart}
       className={clsx(buttonClasses, {
         "hover:opacity-90": true,
       })}
@@ -52,12 +57,18 @@ function SubmitButton({
       <div className="absolute left-0 ml-4">
         <PlusIcon className="h-5" />
       </div>
-      Add To Cart
+      {labels.addToCart}
     </button>
   );
 }
 
-export function AddToCart({ product }: { product: Product }) {
+export function AddToCart({
+  product,
+  labels,
+}: {
+  product: Product;
+  labels: Labels;
+}) {
   const { variants, availableForSale } = product;
   const { addCartItem } = useCart();
   const searchParams = useSearchParams();
@@ -85,6 +96,7 @@ export function AddToCart({ product }: { product: Product }) {
       <SubmitButton
         availableForSale={availableForSale}
         selectedVariantId={selectedVariantId}
+        labels={labels}
       />
       <p aria-live="polite" className="sr-only" role="status">
         {message}

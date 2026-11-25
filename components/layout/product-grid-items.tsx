@@ -1,20 +1,23 @@
 import Grid from "components/grid";
 import { GridTileImage } from "components/grid/tile";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 import { Product } from "lib/shopify/types";
 import Link from "next/link";
 
-export default function ProductGridItems({
+export default async function ProductGridItems({
   products,
 }: {
   products: Product[];
 }) {
+  const lang = await getLocale();
   return (
     <>
       {products.map((product) => (
         <Grid.Item key={product.handle} className="animate-fadeIn">
           <Link
             className="relative inline-block h-full w-full"
-            href={`/product/${product.handle}`}
+            href={localizePath(lang, `/product/${product.handle}`)}
             prefetch={true}
           >
             <GridTileImage

@@ -1,7 +1,10 @@
 import { GridTileImage } from "components/grid/tile";
 import { Gallery } from "components/product/gallery";
 import { ProductDescription } from "components/product/product-description";
+import { getDictionary } from "dictionaries";
 import { HIDDEN_PRODUCT_TAG } from "lib/constants";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 import { getProduct, getProductRecommendations } from "lib/shopify";
 import type { Image } from "lib/shopify/types";
 import type { Metadata } from "next";
@@ -50,6 +53,7 @@ export default async function ProductPage(props: {
   params: Promise<{ handle: string }>;
 }) {
   const params = await props.params;
+  const { product: labels } = await getDictionary();
   const product = await getProduct(params.handle);
 
   if (!product) return notFound();
@@ -98,24 +102,25 @@ export default async function ProductPage(props: {
 
           <div className="basis-full lg:basis-2/6">
             <Suspense fallback={null}>
-              <ProductDescription product={product} />
+              <ProductDescription product={product} labels={labels} />
             </Suspense>
           </div>
         </div>
-        <RelatedProducts id={product.id} />
+        <RelatedProducts id={product.id} title={labels.related} />
       </div>
     </>
   );
 }
 
-async function RelatedProducts({ id }: { id: string }) {
+async function RelatedProducts({ id, title }: { id: string; title: string }) {
+  const lang = await getLocale();
   const relatedProducts = await getProductRecommendations(id);
 
   if (!relatedProducts.length) return null;
 
   return (
     <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
+      <h2 className="mb-4 text-2xl font-bold">{title}</h2>
       <ul className="flex w-full gap-4 overflow-x-auto pt-1">
         {relatedProducts.map((product) => (
           <li
@@ -124,7 +129,7 @@ async function RelatedProducts({ id }: { id: string }) {
           >
             <Link
               className="relative h-full w-full"
-              href={`/product/${product.handle}`}
+              href={localizePath(lang, `/product/${product.handle}`)}
               prefetch={true}
             >
               <GridTileImage

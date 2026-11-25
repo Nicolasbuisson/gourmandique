@@ -4,7 +4,13 @@ import Image from "next/image";
 import { useRef, type MouseEvent } from "react";
 import cake from "../../public/images/mimiWeddingCake.jpg";
 
-export const FloatingGallery = () => {
+export const FloatingGallery = ({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle: string;
+}) => {
   const plane1 = useRef<HTMLDivElement>(null);
   const plane2 = useRef<HTMLDivElement>(null);
   const plane3 = useRef<HTMLDivElement>(null);
@@ -113,10 +119,8 @@ export const FloatingGallery = () => {
         />
       </div>
       <div className="absolute left-1/2 top-[45%] -translate-x-1/2 -translate-y-1/2 text-center text-lg">
-        <h2 className="font-display text-h3 font-normal text-ink">
-          Floating Images Gallery
-        </h2>
-        <p className="mt-2.5 text-ink-subtle">Next.js and GSAP</p>
+        <h2 className="font-display text-h3 font-normal text-ink">{title}</h2>
+        <p className="mt-2.5 text-ink-subtle">{subtitle}</p>
       </div>
     </section>
   );

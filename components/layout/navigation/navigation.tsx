@@ -1,4 +1,7 @@
 "use client";
+import type { Dictionary } from "dictionaries";
+import { localizePath } from "lib/i18n";
+import { useLocale } from "lib/use-locale";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { height } from "./anim";
@@ -6,40 +9,24 @@ import { Body } from "./body";
 import { Footer } from "./footer";
 import { HeaderImage } from "./headerImage";
 
-const links = [
-  {
-    title: "Home",
-    href: "/",
-    src: "mimiWeddingCake.jpg",
-    alt: "home page image",
-  },
-  {
-    title: "Shop",
-    href: "/shop",
-    src: "gourmandiqueLogo.jpg",
-    alt: "pastries",
-  },
-  {
-    title: "Wedding",
-    href: "/wedding",
-    src: "mimiWeddingCake.jpg",
-    alt: "wedding cake",
-  },
-  {
-    title: "About",
-    href: "/about",
-    src: "gourmandiqueLogo.jpg",
-    alt: "picture of founder",
-  },
-  {
-    title: "Contact",
-    href: "/contact",
-    src: "gourmandiqueLogo.jpg",
-    alt: "contact page image",
-  },
-];
+// The menu's pages, in order, with the photo shown while each is hovered.
+// Titles and alt text come from the dictionary.
+const LINKS = [
+  { key: "home", href: "/", src: "mimiWeddingCake.jpg" },
+  { key: "shop", href: "/shop", src: "gourmandiqueLogo.jpg" },
+  { key: "wedding", href: "/wedding", src: "mimiWeddingCake.jpg" },
+  { key: "about", href: "/about", src: "gourmandiqueLogo.jpg" },
+  { key: "contact", href: "/contact", src: "gourmandiqueLogo.jpg" },
+] as const;
 
-export const Nav = () => {
+export const Nav = ({ labels }: { labels: Dictionary["nav"] }) => {
+  const lang = useLocale();
+  const links = LINKS.map(({ key, href, src }) => ({
+    title: labels.links[key],
+    alt: labels.images[key],
+    href: localizePath(lang, href),
+    src,
+  }));
   const [selectedLink, setSelectedLink] = useState({
     isActive: false,
     index: 0,
@@ -60,7 +47,7 @@ export const Nav = () => {
             selectedLink={selectedLink}
             setSelectedLink={setSelectedLink}
           />
-          <Footer />
+          <Footer labels={labels.credits} />
         </div>
         <HeaderImage
           src={links[selectedLink.index]!.src}

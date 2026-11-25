@@ -3,6 +3,9 @@ export default {
     ppr: true,
     inlineCss: true,
     useCache: true,
+    // `next/root-params`: lets server components read `[lang]` without it
+    // being passed down (see lib/get-locale.ts).
+    rootParams: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],

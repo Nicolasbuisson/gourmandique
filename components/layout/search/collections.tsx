@@ -1,12 +1,23 @@
 import clsx from "clsx";
 import { Suspense } from "react";
 
+import { getDictionary } from "dictionaries";
+import { getLocale } from "lib/get-locale";
+import { localizePath } from "lib/i18n";
 import { getCollections } from "lib/shopify";
 import FilterList from "./filter";
 
 async function CollectionList() {
+  const lang = await getLocale();
+  const { shop } = await getDictionary();
   const collections = await getCollections();
-  return <FilterList list={collections} title="Collections" />;
+  const list = collections.map((collection) => ({
+    // The synthetic "All" entry isn't a Shopify collection, so it has no
+    // translation there.
+    title: collection.handle === "" ? shop.all : collection.title,
+    path: localizePath(lang, collection.path),
+  }));
+  return <FilterList list={list} title={shop.collections} />;
 }
 
 const skeleton = "mb-3 h-4 w-5/6 animate-pulse rounded-sm";
