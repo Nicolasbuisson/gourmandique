@@ -34,7 +34,9 @@ export const Body = ({
         exit="exit"
         key={char + i}
       >
-        {char}
+        {/* A flex item holding only a space collapses to nothing, so spaces
+            become non-breaking ones that keep their width. */}
+        {char === " " ? " " : char}
       </motion.span>
     ));
 

@@ -23,20 +23,26 @@ export const FlipLink = (props: FlipLinkProps) => {
   const TINT_DURATION = DURATION * 1.5;
   const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
   const { href, label, onClick, className } = props;
+  // Each letter is its own inline-block, and a box holding only a space
+  // collapses to nothing, so spaces become non-breaking ones that keep their
+  // width.
+  const letters = label.split("").map((l) => (l === " " ? " " : l));
   return (
     <MotionLink
       initial="initial"
       whileHover="hovered"
       href={href}
+      // French capitals carry accents (À, É) that rise above the cap height,
+      // and overflow-hidden would clip them at the tight English line height.
       className={clsx(
-        "relative block w-fit overflow-hidden whitespace-nowrap font-semibold leading-[0.9] no-underline transition-all duration-300 ease-in-out",
+        "relative block w-fit overflow-hidden whitespace-nowrap font-semibold leading-[0.9] no-underline transition-all duration-300 ease-in-out [&:lang(fr)]:leading-[1.3]",
         className,
       )}
       onClick={onClick}
       aria-label={label}
     >
       <div aria-hidden="true">
-        {label.split("").map((l, i) => (
+        {letters.map((l, i) => (
           <motion.span
             className="inline-block"
             variants={{
@@ -60,7 +66,7 @@ export const FlipLink = (props: FlipLinkProps) => {
         ))}
       </div>
       <div aria-hidden="true" className="absolute inset-0">
-        {label.split("").map((l, i) => {
+        {letters.map((l, i) => {
           // The stagger is baked into `times` rather than `delay` so each
           // keyframe track starts at hover-start, while the letter is still
           // clipped below the fold. A `delay` would instead snap the letter to
