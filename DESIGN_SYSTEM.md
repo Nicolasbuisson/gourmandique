@@ -142,9 +142,10 @@ the accent has to step up the ramp to `brand-300` (`#74B5B0`), and
 
 ## Typography
 
-Two faces, both from Google Fonts, both loaded through `next/font/google` in
-[fonts.ts](app/fonts.ts) — self-hosted, preloaded, zero layout shift, no
-network request to Google at runtime.
+Two faces, both loaded in [fonts.ts](app/fonts.ts) — self-hosted, preloaded,
+zero layout shift, no network request to Google at runtime. Inter comes through
+`next/font/google`; Cormorant through `next/font/local`, as a patched copy (see
+below).
 
 ### Cormorant Garamond — `font-display`
 
@@ -157,6 +158,17 @@ quotes. Never UI chrome, never long body copy.
 ```
 
 Loaded as a variable font (weights 300–700) with both roman and italic.
+
+**Patched accents.** Stock Cormorant draws its lowercase acute, grave and
+circumflex as long, near-vertical hairlines reaching ascender height, which
+reads badly in French ("été" looks like "e/te/"). We ship a modified copy,
+renamed _Gourmandique Display_ as is customary for a modified OFL font, in which those letters carry the
+capital accent shapes, scaled to 90% and set 70 units above the x-height.
+Diereses, the cedilla and everything else are stock. The `.woff2` files, the
+licence and the script that builds them live in
+[fonts/cormorant/](fonts/cormorant/). To change the accents, edit `SCALE` /
+`GAP` in `patch_cormorant.py` and rerun it (`pip install fonttools brotli`
+first); don't edit the font files by hand or swap back to `next/font/google`.
 
 ### Inter — `font-sans`
 

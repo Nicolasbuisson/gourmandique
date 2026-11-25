@@ -1,4 +1,5 @@
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 
 /**
  * Display face — Cormorant Garamond.
@@ -6,12 +7,26 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
  * flourish in the Gourmandique mark. Reserved for headings, product titles
  * and pull quotes; never for UI chrome or long body copy.
  *
+ * Self-hosted as "Gourmandique Display", a copy patched to calm its lowercase
+ * accents; fonts/cormorant/patch_cormorant.py rebuilds it.
+ *
  * Exposed as `--font-cormorant`, surfaced through the `font-display` utility.
  */
-export const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
+export const cormorant = localFont({
+  src: [
+    {
+      path: "../fonts/cormorant/GourmandiqueDisplay-VF.woff2",
+      weight: "300 700",
+      style: "normal",
+    },
+    {
+      path: "../fonts/cormorant/GourmandiqueDisplay-Italic-VF.woff2",
+      weight: "300 700",
+      style: "italic",
+    },
+  ],
   display: "swap",
+  adjustFontFallback: "Times New Roman",
   variable: "--font-cormorant",
 });
 
