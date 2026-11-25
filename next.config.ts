@@ -1,11 +1,15 @@
-export default {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  // Cache Components: enables Partial Prerendering and the `"use cache"`
+  // directive (replaces `experimental.ppr` and `experimental.useCache`).
+  cacheComponents: true,
+  // Keep today's prefetch behaviour (dynamic data included) for now. Set to
+  // `true` to prefetch only the static shell; it becomes the default in the
+  // next major.
+  partialPrefetching: false,
   experimental: {
-    ppr: true,
     inlineCss: true,
-    useCache: true,
-    // `next/root-params`: lets server components read `[lang]` without it
-    // being passed down (see lib/get-locale.ts).
-    rootParams: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -18,3 +22,5 @@ export default {
     ],
   },
 };
+
+export default nextConfig;
