@@ -2,6 +2,7 @@ import { localizePath, locales } from "lib/i18n";
 import { getCollections, getPages, getProducts } from "lib/shopify";
 import { baseUrl, validateEnvironmentVariables } from "lib/utils";
 import { MetadataRoute } from "next";
+import { connection } from "next/server";
 
 type Route = {
   path: string;
@@ -21,9 +22,10 @@ const localize = ({ path, lastModified }: Route): MetadataRoute.Sitemap =>
     },
   }));
 
-export const dynamic = "force-dynamic";
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Render at request time, not at build (replaces `dynamic = "force-dynamic"`,
+  // which Cache Components doesn't allow).
+  await connection();
   validateEnvironmentVariables();
 
   const routesMap = ["/"].map((path) => ({

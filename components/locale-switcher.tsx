@@ -5,6 +5,7 @@ import { locales, switchLocalePath } from "lib/i18n";
 import { useLocale } from "lib/use-locale";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 
 // "EN / FR": links to the current page in each locale. The current locale is
 // plain text, the other a link. Each label is in its own language (and tagged
@@ -13,13 +14,44 @@ import { usePathname } from "next/navigation";
 // The middleware stores the choice in a cookie as the new URL loads, so `/`
 // sends the visitor back to it next time.
 
-export function LocaleSwitcher({
-  labels,
-  className,
-}: {
+type Props = {
   labels: Dictionary["languageSwitcher"];
   className?: string;
-}) {
+};
+
+// `usePathname()` and `useParams()` are request data on dynamic routes, so
+// with Cache Components they need a `<Suspense>` boundary. The fallback is
+// the same list as plain text, so the static shell keeps its layout.
+export function LocaleSwitcher(props: Props) {
+  return (
+    <Suspense fallback={<LocaleSwitcherFallback {...props} />}>
+      <LocaleSwitcherLinks {...props} />
+    </Suspense>
+  );
+}
+
+function LocaleSwitcherFallback({ labels, className }: Props) {
+  return (
+    <nav aria-label={labels.label} className={className}>
+      <ul className="flex items-center gap-2 uppercase">
+        {locales.map((locale, i) => (
+          <li key={locale} className="flex items-center gap-2">
+            {i > 0 ? (
+              <span aria-hidden className="text-ink-subtle">
+                /
+              </span>
+            ) : null}
+            <span lang={locale} className="text-ink-subtle">
+              {locale}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function LocaleSwitcherLinks({ labels, className }: Props) {
   const lang = useLocale();
   const pathname = usePathname();
 
